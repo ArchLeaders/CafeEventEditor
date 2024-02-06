@@ -34,9 +34,20 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TextBlock HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Text="[ Content ]" />
+            <ui:TabView Name="MainTabView"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        CanDragTabs="True"
+                        CanReorderTabs="True"
+                        TabWidthMode="SizeToContent">
+                <ui:TabViewItem Header="Welcome" IconSource="Home">
+                    <Grid>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="Welcome!" />
+                    </Grid>
+                </ui:TabViewItem>
+            </ui:TabView>
         </Grid>
 
         <Grid Grid.Row="2"
