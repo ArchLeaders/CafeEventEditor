@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./icon.jpg" width="120vh">
+  <img src="https://github.com/ArchLeaders/CafeEventEditor/blob/main/Icon.jpg" width="120vh">
   <br>
   <br>
   <h1>- &nbsp; Café Event Editor &nbsp; -</h1>
