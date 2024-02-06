@@ -3,6 +3,10 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:app="using:CafeEventEditor"
+               xmlns:core="clr-namespace:CafeEventEditor.Core.Modals;assembly=CafeEventEditor.Core"
+               xmlns:pi="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+               xmlns:ui="using:FluentAvalonia.UI.Controls"
                xmlns:uiw="using:FluentAvalonia.UI.Windowing"
                xmlns:vm="using:CafeEventEditor.ViewModels"
                Title="ShellView"
@@ -15,5 +19,45 @@
                x:DataType="vm:ShellViewModel"
                Icon="/Assets/icon.ico"
                mc:Ignorable="d">
-    Welcome to Avalonia!
+    <Grid RowDefinitions="32,*,25">
+        <Grid ColumnDefinitions="Auto,*">
+            <Viewbox Width="24"
+                     Height="24"
+                     Margin="6,3">
+                <Border ClipToBounds="True" CornerRadius="5">
+                    <Image Width="32"
+                           Height="32"
+                           Source="/Assets/icon.ico" />
+                </Border>
+            </Viewbox>
+            <Menu Name="MainMenu" Grid.Column="1" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="[ Content ]" />
+        </Grid>
+
+        <Grid Grid.Row="2"
+              ColumnDefinitions="Auto,Auto,*,Auto,Auto"
+              IsHitTestVisible="False">
+            <Border Grid.ColumnSpan="5" Background="{DynamicResource SystemAccentColor}" />
+            <pi:Icon Margin="5,0" Value="{Binding Icon, Source={x:Static core:AppStatus.Shared}}" />
+            <TextBlock Grid.Column="1"
+                       Margin="5,0"
+                       VerticalAlignment="Center"
+                       FontFamily="{StaticResource UbuntuMono}"
+                       Text="{Binding Status, Source={x:Static core:AppStatus.Shared}}" />
+            <TextBlock Grid.Column="3"
+                       Margin="5,0"
+                       VerticalAlignment="Center"
+                       FontFamily="{StaticResource UbuntuMono}"
+                       FontSize="12">
+                <Run Text="{x:Static app:App.Title}" />
+                <Run Text=" |" />
+                <Run Text="{Binding, Source={x:Static app:App.Version}, StringFormat=' v{0}'}" />
+            </TextBlock>
+        </Grid>
+    </Grid>
 </uiw:AppWindow>
