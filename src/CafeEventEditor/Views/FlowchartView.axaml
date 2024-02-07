@@ -8,5 +8,5 @@
              d:DesignWidth="800"
              x:DataType="vm:FlowchartViewModel"
              mc:Ignorable="d">
-    Welcome to Avalonia!
+    <TextBlock Text="{Binding Flowchart.Name}" />
 </UserControl>

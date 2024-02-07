@@ -1,6 +1,7 @@
 ﻿using BfevLibrary.Core;
 using CafeEventEditor.Components.Models;
 using CafeEventEditor.Core.Components;
+using CafeEventEditor.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace CafeEventEditor.ViewModels;
@@ -16,5 +17,6 @@ public partial class FlowchartViewModel : Document
     {
         Handle = CafeLoadManager.LoadFromFile(file);
         Flowchart = Handle.Bfev.Flowchart;
+        Content = new FlowchartView(this);
     }
 }
