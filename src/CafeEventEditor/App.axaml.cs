@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using CafeEventEditor.ViewModels;
+using CafeEventEditor.Builders;
 using CafeEventEditor.Views;
 using System.Reflection;
 
@@ -26,11 +26,23 @@ public partial class App : Application
         BindingPlugins.DataValidators.RemoveAt(0);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-            desktop.MainWindow = new ShellView {
-                DataContext = new ShellViewModel()
-            };
+            ShellView shellView = new();
+
+            MenuFactory menuFactory = new(shellView);
+            shellView.MainMenu.ItemsSource = menuFactory.Items;
+
+            menuFactory.Append<FileMenu>();
+
+            XamlRoot = shellView;
+            desktop.MainWindow = shellView;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    public static Task Exit()
+    {
+        Environment.Exit(0);
+        return Task.CompletedTask;
     }
 }

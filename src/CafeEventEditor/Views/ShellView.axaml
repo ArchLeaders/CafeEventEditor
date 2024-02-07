@@ -30,7 +30,10 @@
                            Source="/Assets/icon.ico" />
                 </Border>
             </Viewbox>
-            <Menu Name="MainMenu" Grid.Column="1" />
+            <Menu Name="MainMenu"
+                  Grid.Column="1"
+                  Margin="0,1"
+                  VerticalAlignment="Center" />
         </Grid>
 
         <Grid Grid.Row="1">

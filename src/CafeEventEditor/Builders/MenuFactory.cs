@@ -54,9 +54,12 @@ public class MenuFactory(TopLevel? topLevel) : IMenuFactory
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
+    public IMenuFactory Append<T>() where T : class, new() => Append(new T());
+
+    /// <inheritdoc cref="Append{T}()"/>
     public IMenuFactory Append<T>(T source) where T : class => Append((object)source);
 
-    /// <inheritdoc cref="Append{T}(T)"/>
+    /// <inheritdoc cref="Append{T}()"/>
     public IMenuFactory Append(object source)
     {
         Type type = source.GetType();
