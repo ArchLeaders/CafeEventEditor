@@ -1,0 +1,20 @@
+﻿using BfevLibrary.Core;
+using CafeEventEditor.Components.Models;
+using CafeEventEditor.Core.Components;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace CafeEventEditor.ViewModels;
+
+public partial class FlowchartViewModel : Document
+{
+    public CafeWriterHandle Handle { get; set; }
+
+    [ObservableProperty]
+    private Flowchart? _flowchart;
+
+    public FlowchartViewModel(string file) : base(Path.GetFileName(file))
+    {
+        Handle = CafeLoadManager.LoadFromFile(file);
+        Flowchart = Handle.Bfev.Flowchart;
+    }
+}
