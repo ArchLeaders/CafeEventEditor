@@ -3,11 +3,14 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using CafeEventEditor.Builders;
 using CafeEventEditor.Components;
 using CafeEventEditor.Components.Menus;
 using CafeEventEditor.Components.Models;
+using CafeEventEditor.Core;
 using CafeEventEditor.Views;
+using ConfigFactory.Avalonia.Helpers;
 using FluentAvalonia.UI.Controls;
 using System.Reflection;
 
@@ -36,6 +39,14 @@ public partial class App : Application
             MenuFactory menuFactory = new(shellView);
             shellView.MainMenu.ItemsSource = menuFactory.Items;
             menuFactory.Append<FileMenu>();
+            menuFactory.Append<OptionsMenu>();
+
+            BrowserDialog.StorageProvider = desktop.MainWindow.StorageProvider;
+            Config.SetTheme = (theme) => {
+                RequestedThemeVariant = theme == "Dark" ? ThemeVariant.Dark : ThemeVariant.Light;
+            };
+
+            Config.SetTheme(Config.Shared.Theme);
 
             DocumentManager.Shared.Documents.Add(new Document("Welcome", Symbol.Home) {
                 Content = new WelcomeView()
