@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using CafeEventEditor.Builders;
+using CafeEventEditor.Components.Menus;
 using CafeEventEditor.Views;
 using System.Reflection;
 
