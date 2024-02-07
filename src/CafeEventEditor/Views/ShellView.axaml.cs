@@ -18,7 +18,18 @@ public partial class ShellView : AppWindow
     private static async void TabItemCloseRequested(TabViewItem _, TabViewTabCloseRequestedEventArgs args)
     {
         if (args.Item is Document doc && await doc.CloseRequested()) {
-            DocumentManager.Shared.Documents.Remove(doc);
+            DocumentManager mgr = DocumentManager.Shared;
+
+            int index = mgr.Documents.IndexOf(doc);
+            mgr.Documents.RemoveAt(index);
+            mgr.Current = null;
+
+            if (mgr.Documents.Count == 0) {
+                return;
+            }
+
+            mgr.Current = index == mgr.Documents.Count
+                ? mgr.Documents[--index] : mgr.Documents[index];
         }
     }
 }
