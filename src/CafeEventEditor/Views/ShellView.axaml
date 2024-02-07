@@ -4,6 +4,8 @@
                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                xmlns:app="using:CafeEventEditor"
+               xmlns:comp="using:CafeEventEditor.Components"
+               xmlns:comp-models="using:CafeEventEditor.Components.Models"
                xmlns:core="clr-namespace:CafeEventEditor.Core.Modals;assembly=CafeEventEditor.Core"
                xmlns:pi="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
                xmlns:ui="using:FluentAvalonia.UI.Controls"
@@ -42,14 +44,17 @@
                         VerticalAlignment="Stretch"
                         CanDragTabs="True"
                         CanReorderTabs="True"
+                        SelectedItem="{Binding Current, Source={x:Static comp:DocumentManager.Shared}}"
+                        TabItems="{Binding Documents, Source={x:Static comp:DocumentManager.Shared}}"
                         TabWidthMode="SizeToContent">
-                <ui:TabViewItem Header="Welcome" IconSource="Home">
-                    <Grid>
-                        <TextBlock HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Text="Welcome!" />
-                    </Grid>
-                </ui:TabViewItem>
+                <ui:TabView.TabItemTemplate>
+                    <DataTemplate x:DataType="{x:Type comp-models:Document}">
+                        <ui:TabViewItem CloseRequested="TabItemCloseRequested"
+                                        Content="{Binding Content}"
+                                        Header="{Binding Header}"
+                                        IconSource="{Binding Icon}" />
+                    </DataTemplate>
+                </ui:TabView.TabItemTemplate>
             </ui:TabView>
         </Grid>
 
