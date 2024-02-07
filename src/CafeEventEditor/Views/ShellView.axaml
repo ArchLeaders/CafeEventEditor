@@ -9,7 +9,7 @@
                xmlns:ui="using:FluentAvalonia.UI.Controls"
                xmlns:uiw="using:FluentAvalonia.UI.Windowing"
                xmlns:vm="using:CafeEventEditor.ViewModels"
-               Title="ShellView"
+               Title="{x:Static app:App.Title}"
                Width="1000"
                Height="650"
                MinWidth="800"
