@@ -1,4 +1,5 @@
 ﻿using BfevLibrary.Core;
+using CafeEventEditor.Components;
 using CafeEventEditor.Components.Models;
 using CafeEventEditor.Core.Components;
 using CafeEventEditor.Views;
@@ -8,6 +9,8 @@ namespace CafeEventEditor.ViewModels;
 
 public partial class FlowchartViewModel : Document
 {
+    public static LayoutConfig Layout { get; } = LayoutConfig.Load("FlowchartLayout");
+
     public CafeWriterHandle Handle { get; set; }
 
     [ObservableProperty]

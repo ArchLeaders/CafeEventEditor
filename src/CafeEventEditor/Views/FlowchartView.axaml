@@ -3,10 +3,89 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:bfev="clr-namespace:BfevLibrary.Core;assembly=BfevLibrary"
              xmlns:vm="using:CafeEventEditor.ViewModels"
              d:DesignHeight="450"
              d:DesignWidth="800"
              x:DataType="vm:FlowchartViewModel"
              mc:Ignorable="d">
-    <TextBlock Text="{Binding Flowchart.Name}" />
+    <UserControl.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Padding" Value="10,3,10,4" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid Name="Root" Margin="0,15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding LeftPanel, Source={x:Static vm:FlowchartViewModel.Layout}}" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="{Binding CenterPanel, Source={x:Static vm:FlowchartViewModel.Layout}}" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="{Binding RightPanel, Source={x:Static vm:FlowchartViewModel.Layout}}" />
+        </Grid.ColumnDefinitions>
+
+        <GridSplitter Grid.Column="1"
+                      MinWidth="2"
+                      Margin="15,0"
+                      Background="{DynamicResource SystemChromeHighColor}"
+                      CornerRadius="1"
+                      DragCompleted="LeftPanel_DragCompleted" />
+
+        <!--  Tree  -->
+
+        <GridSplitter Grid.Column="3"
+                      MinWidth="2"
+                      Margin="15,0"
+                      Background="{DynamicResource SystemChromeHighColor}"
+                      CornerRadius="1"
+                      DragCompleted="RightPanel_DragCompleted" />
+
+        <Grid Grid.Column="4"
+              Margin="0,0,15,0"
+              RowDefinitions="Auto,*,*">
+            <StackPanel>
+                <TextBlock Margin="10,5"
+                           FontSize="14"
+                           Text="Flowchart Name" />
+                <TextBox Text="{Binding Flowchart.Name}" Watermark="Flowchart Name" />
+            </StackPanel>
+
+            <Grid Grid.Row="1"
+                  Margin="0,10,0,0"
+                  RowDefinitions="Auto,*">
+                <TextBlock Margin="10,5"
+                           FontSize="14"
+                           Text="Actors" />
+                <Border Grid.Row="1"
+                        Padding="3"
+                        BorderBrush="{DynamicResource ControlStrokeColorDefault}"
+                        BorderThickness="1"
+                        CornerRadius="3">
+                    <ListBox ItemsSource="{Binding Flowchart.Actors}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type bfev:Actor}">
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="2"
+                  Margin="0,10,0,0"
+                  RowDefinitions="Auto,*">
+                <TextBlock Margin="10,5"
+                           FontSize="14"
+                           Text="Entry Points" />
+                <Border Grid.Row="1"
+                        Padding="3"
+                        BorderBrush="{DynamicResource ControlStrokeColorDefault}"
+                        BorderThickness="1"
+                        CornerRadius="3">
+                    <ListBox ItemsSource="{Binding Flowchart.EntryPoints.Keys}" />
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
 </UserControl>
