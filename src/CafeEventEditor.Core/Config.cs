@@ -6,6 +6,8 @@ namespace CafeEventEditor.Core;
 
 public partial class Config : ConfigModule<Config>
 {
+    public override string Name { get; } = "CafeEventEditor";
+
     public static Action<string>? SetTheme { get; set; }
 
     [ObservableProperty]
