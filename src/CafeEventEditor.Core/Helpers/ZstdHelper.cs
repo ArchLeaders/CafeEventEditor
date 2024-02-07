@@ -17,11 +17,6 @@ public static class ZstdHelper
     private static readonly Decompressor _defaultDecompressor = new();
     private static readonly Dictionary<int, byte[]> _dicts = [];
 
-    static ZstdHelper()
-    {
-        LoadDictionaries(Config.Shared.Dictionaries);
-    }
-
     public static void LoadDictionaries(string path)
     {
         if (!File.Exists(path)) {

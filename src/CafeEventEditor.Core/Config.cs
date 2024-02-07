@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CafeEventEditor.Core.Helpers;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ConfigFactory.Core;
 
 namespace CafeEventEditor.Core;
@@ -29,5 +30,10 @@ public partial class Config : ConfigModule<Config>
     partial void OnThemeChanged(string value)
     {
         SetTheme?.Invoke(value);
+    }
+
+    partial void OnDictionariesChanged(string value)
+    {
+        ZstdHelper.LoadDictionaries(value);
     }
 }
