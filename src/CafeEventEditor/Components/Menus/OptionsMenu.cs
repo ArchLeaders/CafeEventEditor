@@ -1,4 +1,4 @@
-﻿using CafeEventEditor.Builders.Attributes;
+﻿using CafeEventEditor.Services.Attributes;
 using CafeEventEditor.ViewModels;
 
 namespace CafeEventEditor.Components.Menus;

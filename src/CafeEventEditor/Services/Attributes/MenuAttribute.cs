@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace CafeEventEditor.Builders.Attributes;
+namespace CafeEventEditor.Services.Attributes;
 
 // (c) NX-Editor, https://github.com/NX-Editor/NxEditor.PluginBase/blob/master/src/Attributes/MenuAttribute.cs
 

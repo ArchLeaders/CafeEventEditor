@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using System.Collections.ObjectModel;
 
-namespace CafeEventEditor.Builders;
+namespace CafeEventEditor.Services;
 
 // (c) NX-Editor, https://github.com/NX-Editor/NxEditor.PluginBase/blob/master/src/Components/IMenuFactory.cs
 

@@ -1,4 +1,4 @@
-﻿using CafeEventEditor.Builders.Attributes;
+﻿using CafeEventEditor.Services.Attributes;
 using CafeEventEditor.ViewModels;
 using ConfigFactory.Avalonia.Helpers;
 using ConfigFactory.Core.Attributes;

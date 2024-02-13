@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
-using CafeEventEditor.Builders.Attributes;
+using CafeEventEditor.Services.Attributes;
 using CafeEventEditor.Components;
 using CafeEventEditor.Core.Modals;
 using CommunityToolkit.Mvvm.Input;
@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace CafeEventEditor.Builders;
+namespace CafeEventEditor.Services;
 
 // (c) NX-Editor, https://github.com/NX-Editor/NxEditor/blob/master/src/NxEditor/Generators/MenuFactory.cs
 
