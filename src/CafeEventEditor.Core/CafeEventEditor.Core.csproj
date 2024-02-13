@@ -15,4 +15,8 @@
     <PackageReference Include="ZstdSharp.Port" Version="0.7.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Avalonia.NodeEditor\src\Avalonia.NodeEditor.Core.Mvvm\Avalonia.NodeEditor.Core.Mvvm.csproj" />
+  </ItemGroup>
+
 </Project>

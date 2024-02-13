@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Avalonia.NodeEditor\src\Avalonia.NodeEditor\Avalonia.NodeEditor.csproj" />
     <ProjectReference Include="..\CafeEventEditor.Core\CafeEventEditor.Core.csproj" />
   </ItemGroup>
 </Project>

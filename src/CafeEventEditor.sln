@@ -7,6 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CafeEventEditor.Core", "Caf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CafeEventEditor", "CafeEventEditor\CafeEventEditor.csproj", "{D381DC69-DF3C-4E29-82A3-2D0129E52228}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D9B4C8CE-FD71-424F-9A3E-CC8D11E59BAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.NodeEditor", "..\lib\Avalonia.NodeEditor\src\Avalonia.NodeEditor\Avalonia.NodeEditor.csproj", "{2050AE28-0AEA-4BAA-8FB0-FFC0FF46EC88}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.NodeEditor.Core.Mvvm", "..\lib\Avalonia.NodeEditor\src\Avalonia.NodeEditor.Core.Mvvm\Avalonia.NodeEditor.Core.Mvvm.csproj", "{E01EA356-5DD9-46B9-9A09-9BCC613D91B1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.NodeEditor.Core", "..\lib\Avalonia.NodeEditor\src\Avalonia.NodeEditor.Core\Avalonia.NodeEditor.Core.csproj", "{C33D249D-EEFF-4CD3-BAD3-CFE3C841747D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +29,25 @@ Global
 		{D381DC69-DF3C-4E29-82A3-2D0129E52228}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D381DC69-DF3C-4E29-82A3-2D0129E52228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D381DC69-DF3C-4E29-82A3-2D0129E52228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2050AE28-0AEA-4BAA-8FB0-FFC0FF46EC88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2050AE28-0AEA-4BAA-8FB0-FFC0FF46EC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2050AE28-0AEA-4BAA-8FB0-FFC0FF46EC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2050AE28-0AEA-4BAA-8FB0-FFC0FF46EC88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E01EA356-5DD9-46B9-9A09-9BCC613D91B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01EA356-5DD9-46B9-9A09-9BCC613D91B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01EA356-5DD9-46B9-9A09-9BCC613D91B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01EA356-5DD9-46B9-9A09-9BCC613D91B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C33D249D-EEFF-4CD3-BAD3-CFE3C841747D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C33D249D-EEFF-4CD3-BAD3-CFE3C841747D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C33D249D-EEFF-4CD3-BAD3-CFE3C841747D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C33D249D-EEFF-4CD3-BAD3-CFE3C841747D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2050AE28-0AEA-4BAA-8FB0-FFC0FF46EC88} = {D9B4C8CE-FD71-424F-9A3E-CC8D11E59BAA}
+		{E01EA356-5DD9-46B9-9A09-9BCC613D91B1} = {D9B4C8CE-FD71-424F-9A3E-CC8D11E59BAA}
+		{C33D249D-EEFF-4CD3-BAD3-CFE3C841747D} = {D9B4C8CE-FD71-424F-9A3E-CC8D11E59BAA}
 	EndGlobalSection
 EndGlobal
