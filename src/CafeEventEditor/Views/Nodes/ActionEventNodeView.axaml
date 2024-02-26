@@ -1,0 +1,28 @@
+<UserControl x:Class="CafeEventEditor.Views.Nodes.ActionEventNodeView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
+             Width="200"
+             Height="120"
+             Padding="5"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             x:DataType="nodes:ActionEventNode"
+             mc:Ignorable="d">
+    <Border Padding="5"
+            Background="{DynamicResource ActionNodeBrush}"
+            BorderBrush="{DynamicResource TextControlForeground}"
+            BorderThickness="1"
+            BoxShadow="1 1 10 #35000000"
+            CornerRadius="5"
+            ToolTip.Tip="{Binding Name}">
+        <Grid RowDefinitions="*,Auto">
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="{Binding Name}"
+                       TextTrimming="CharacterEllipsis" />
+        </Grid>
+    </Border>
+</UserControl>
