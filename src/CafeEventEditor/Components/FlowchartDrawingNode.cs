@@ -3,6 +3,7 @@ using Avalonia.NodeEditor.Core;
 using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
+using CafeEventEditor.Core.Converters;
 using CafeEventEditor.Core.Helpers;
 using CafeEventEditor.Core.Modals;
 using CafeEventEditor.ViewModels.Nodes;
@@ -132,6 +133,9 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
     private ActionEventNode AppendActionEvent(IPin parent, ActionEvent actionEvent)
     {
         ActionEventNode node = new(actionEvent.Name) {
+            Actor = actionEvent.Actor,
+            Action = actionEvent.ActorAction,
+            Parameters = actionEvent.Parameters?.ToYaml() ?? string.Empty,
             Parent = this,
             X = _xOffset,
             Y = _yOffset

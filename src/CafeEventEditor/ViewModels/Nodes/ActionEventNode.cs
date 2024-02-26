@@ -2,6 +2,7 @@
 using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
+using CafeEventEditor.Core.Converters;
 using CafeEventEditor.Core.Helpers;
 using CafeEventEditor.Core.Modals;
 using CafeEventEditor.Views.Nodes;
@@ -13,7 +14,7 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
 {
     private const string DEFAULT_NAME = "Action Event";
 
-    public static INodeTemplate Template { get; } = new ObservableNodeTemplate(() => new ActionEventNode()) {
+    public static INodeTemplate Template { get; } = new ObservableNodeTemplate(() => new ActionEventNode(DEFAULT_NAME)) {
         Preview = new ActionEventNode(DEFAULT_NAME),
         Title = DEFAULT_NAME
     };
@@ -24,7 +25,11 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
     [ObservableProperty]
     private string? _action;
 
-    public ActionEventNode() : this(DEFAULT_NAME)
+    [ObservableProperty]
+    private string _parameters = string.Empty;
+
+    [Obsolete("This ctor is only for the designer", error: true)]
+    public ActionEventNode()
     {
     }
 
@@ -51,9 +56,21 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         ActionEvent actionEvent = new(Name ?? string.Empty) {
             ActorIndex = actors.GetActorIndex(Actor),
             ActorActionIndex = ActorHelper.GetActorActionIndex(Actor, Action),
+            Parameters = string.IsNullOrEmpty(Parameters) ? [] : Parameters.ParseCafeContainer()
         };
 
         actionEvent.NextEventIndex = events.GetEventIndex(actionEvent, this.GetNextNode());
         return actionEvent;
+    }
+
+    public override string ToString()
+    {
+        return $"""
+            Name: {Name}
+            Actor: {Actor?.Name ?? "~"}
+            Action: {Action}
+            Parameters:
+            - {Parameters.Replace("\r", string.Empty).Trim('\n').Replace("\n", "\n- ")}
+            """;
     }
 }
