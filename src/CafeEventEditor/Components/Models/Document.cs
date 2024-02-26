@@ -1,9 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.NodeEditor.Mvvm;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentAvalonia.UI.Controls;
 
 namespace CafeEventEditor.Components.Models;
 
-public partial class Document : ObservableObject
+public partial class Document : ObservableNodeEditor
 {
     [ObservableProperty]
     private string _header;
