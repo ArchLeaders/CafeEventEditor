@@ -4,11 +4,12 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using CafeEventEditor.Services;
 using CafeEventEditor.Components;
 using CafeEventEditor.Components.Menus;
 using CafeEventEditor.Components.Models;
 using CafeEventEditor.Core;
+using CafeEventEditor.Services;
+using CafeEventEditor.ViewModels;
 using CafeEventEditor.Views;
 using ConfigFactory.Avalonia.Helpers;
 using FluentAvalonia.UI.Controls;
@@ -51,6 +52,12 @@ public partial class App : Application
             DocumentManager.Shared.Documents.Add(new Document("Welcome", Symbol.Home) {
                 Content = new WelcomeView()
             });
+
+#if DEBUG
+            FlowchartViewModel flowchartEditor = new(@"D:\bin\Bfev\AnotherAnimals.bfevfl");
+            DocumentManager.Shared.Documents.Add(flowchartEditor);
+            DocumentManager.Shared.Current = flowchartEditor;
+#endif
         }
 
         base.OnFrameworkInitializationCompleted();
