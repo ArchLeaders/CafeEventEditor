@@ -5,6 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:agc="clr-namespace:AvaloniaGraphControl;assembly=AvaloniaGraphControl"
              xmlns:bfev="clr-namespace:BfevLibrary.Core;assembly=BfevLibrary"
+             xmlns:editor="using:Avalonia.NodeEditor.Controls"
+             xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
              xmlns:sys="using:System"
              xmlns:vm="using:CafeEventEditor.ViewModels"
              d:DesignHeight="450"
@@ -27,6 +29,10 @@
             <ColumnDefinition Width="{Binding RightPanel, Source={x:Static vm:FlowchartViewModel.Layout}}" />
         </Grid.ColumnDefinitions>
 
+        <Grid RowDefinitions="*,*">
+            <!--<editor:Toolbox />-->
+        </Grid>
+
         <GridSplitter Grid.Column="1"
                       MinWidth="2"
                       Margin="14,0"
@@ -35,63 +41,7 @@
                       DragCompleted="LeftPanel_DragCompleted" />
 
         <Border Grid.Column="2" ClipToBounds="True">
-            <ZoomBorder>
-                <agc:GraphPanel Graph="{Binding FlowchartGraph}" LayoutMethod="SugiyamaScheme">
-                    <agc:GraphPanel.DataTemplates>
-                        <DataTemplate DataType="{x:Type sys:String}">
-                            <Border MinWidth="160"
-                                    MinHeight="60"
-                                    Padding="5"
-                                    Background="#775393"
-                                    BorderBrush="{DynamicResource ControlStrokeColorDefault}"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                <TextBlock Text="{Binding}" />
-                            </Border>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type bfev:ActionEvent}">
-                            <Border MinWidth="160"
-                                    MinHeight="60"
-                                    Padding="5"
-                                    Background="#52775A"
-                                    BorderBrush="{DynamicResource ControlStrokeColorDefault}"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                <StackPanel Spacing="5">
-                                    <TextBlock Text="{Binding Name}" />
-                                    <TextBox Text="{Binding ActorName}" Watermark="Actor" />
-                                    <TextBox Text="{Binding ActorAction}" Watermark="Action" />
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type bfev:SubflowEvent}">
-                            <Border MinWidth="160"
-                                    MinHeight="60"
-                                    Padding="5"
-                                    Background="#85c4371f"
-                                    BorderBrush="{DynamicResource ControlStrokeColorDefault}"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                <TextBlock Text="{Binding Name}" />
-                            </Border>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type bfev:SwitchEvent}">
-                            <Border MinWidth="160"
-                                    MinHeight="60"
-                                    Padding="5"
-                                    Background="#33477B"
-                                    BorderBrush="{DynamicResource ControlStrokeColorDefault}"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-                                <TextBlock Text="{Binding Name}" />
-                            </Border>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type agc:Edge}">
-                            <agc:Connection Brush="{DynamicResource TextFillColorPrimaryBrush}" />
-                        </DataTemplate>
-                    </agc:GraphPanel.DataTemplates>
-                </agc:GraphPanel>
-            </ZoomBorder>
+            <editor:Editor DataContext="{Binding Drawing}" />
         </Border>
 
         <GridSplitter Grid.Column="3"
@@ -109,7 +59,7 @@
                 <TextBlock Margin="10,5"
                            FontSize="14"
                            Text="Flowchart Name" />
-                <TextBox Text="{Binding Flowchart.Name}" Watermark="Flowchart Name" />
+                <TextBox Text="{Binding Drawing.Name}" Watermark="Flowchart Name" />
             </StackPanel>
 
             <Grid Grid.Row="1"
@@ -123,7 +73,7 @@
                         BorderBrush="{DynamicResource ControlStrokeColorDefault}"
                         BorderThickness="1"
                         CornerRadius="3">
-                    <ListBox ItemsSource="{Binding Flowchart.Actors}">
+                    <ListBox ItemsSource="{Binding Drawing.Actors}">
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="{x:Type bfev:Actor}">
                                 <TextBlock Text="{Binding Name}" />
@@ -144,7 +94,13 @@
                         BorderBrush="{DynamicResource ControlStrokeColorDefault}"
                         BorderThickness="1"
                         CornerRadius="3">
-                    <ListBox ItemsSource="{Binding Flowchart.EntryPoints.Keys}" />
+                    <ListBox ItemsSource="{Binding Drawing.EntryPointNodes}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type nodes:EntryPointNode}">
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Border>
             </Grid>
         </Grid>

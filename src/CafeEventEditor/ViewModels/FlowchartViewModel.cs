@@ -1,7 +1,7 @@
-﻿using BfevLibrary.Core;
-using CafeEventEditor.Components;
+﻿using CafeEventEditor.Components;
 using CafeEventEditor.Components.Models;
 using CafeEventEditor.Core.Components;
+using CafeEventEditor.Services;
 using CafeEventEditor.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -14,12 +14,20 @@ public partial class FlowchartViewModel : Document
     public CafeWriterHandle Handle { get; set; }
 
     [ObservableProperty]
-    private Flowchart? _flowchart;
+    private FlowchartDrawingNode? _drawing;
 
     public FlowchartViewModel(string file) : base(Path.GetFileName(file))
     {
         Handle = CafeLoadManager.LoadFromFile(file);
-        Flowchart = Handle.Bfev.Flowchart;
+        if (Handle.Bfev.Flowchart is null) {
+            throw new InvalidDataException($"""
+                No flowchart could be found in the event flow '{file}'.
+                """);
+        }
+
         Content = new FlowchartView(this);
+        Drawing = new FlowchartDrawingNode(Handle.Bfev.Flowchart);
+        Factory = new FlowchartNodeFactory();
+        Templates = Factory.CreateTemplates();
     }
 }
