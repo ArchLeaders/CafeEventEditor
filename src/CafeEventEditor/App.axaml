@@ -16,18 +16,33 @@
                     <SolidColorBrush x:Key="SystemChromeLowColor">Transparent</SolidColorBrush>
                     <SolidColorBrush x:Key="SystemChromeMediumColor">#FFF2F2F2</SolidColorBrush>
                     <SolidColorBrush x:Key="SystemChromeMediumLowColor">#FFE6E6E6</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="EntryPointNodeBrush">#775393</SolidColorBrush>
+                    <SolidColorBrush x:Key="ActionNodeBrush">#52A765</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForkNodeBrush">#DCA36F</SolidColorBrush>
+                    <SolidColorBrush x:Key="JoinNodeBrush">#DCA36F</SolidColorBrush>
+                    <SolidColorBrush x:Key="SubflowNodeBrush">#9A434C</SolidColorBrush>
+                    <SolidColorBrush x:Key="SwitchNodeBrush">#425DAD</SolidColorBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="SystemChromeHighColor">#FF737373</SolidColorBrush>
                     <SolidColorBrush x:Key="SystemChromeLowColor">Transparent</SolidColorBrush>
                     <SolidColorBrush x:Key="SystemChromeMediumColor">#FF2B2B2B</SolidColorBrush>
                     <SolidColorBrush x:Key="SystemChromeMediumLowColor">#FF1F1F1F</SolidColorBrush>
+
+                    <SolidColorBrush x:Key="EntryPointNodeBrush">#775393</SolidColorBrush>
+                    <SolidColorBrush x:Key="ActionNodeBrush">#52A765</SolidColorBrush>
+                    <SolidColorBrush x:Key="ForkNodeBrush">#DCA36F</SolidColorBrush>
+                    <SolidColorBrush x:Key="JoinNodeBrush">#DCA36F</SolidColorBrush>
+                    <SolidColorBrush x:Key="SubflowNodeBrush">#9A434C</SolidColorBrush>
+                    <SolidColorBrush x:Key="SwitchNodeBrush">#425DAD</SolidColorBrush>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Application.Resources>
     <Application.Styles>
         <sty:FluentAvaloniaTheme PreferSystemTheme="True" PreferUserAccentColor="True" />
+        <StyleInclude Source="avares://Avalonia.NodeEditor/Themes/FluentTheme.axaml" />
         <StyleInclude Source="avares://ConfigFactory.Avalonia/Themes/Fluent/ConfigFactory.Avalonia.axaml" />
         <StyleInclude Source="/Styles/MenuStyles.axaml" />
     </Application.Styles>
