@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
-             Width="200"
+             Width="280"
              Height="80"
              Padding="5"
              d:DesignHeight="450"
