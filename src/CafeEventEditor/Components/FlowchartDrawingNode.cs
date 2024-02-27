@@ -19,6 +19,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
 
     private readonly Flowchart _flowchart;
     private readonly Dictionary<Event, INode> _cache = [];
+    private double _xOffsetGlobal = 0;
     private double _xOffset = 0;
     private double _yOffset = 0;
 
@@ -38,7 +39,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         Width = 5000;
         EnableSnap = true;
         SnapX = 10;
-        SnapY = 10;
+        SnapY = 10; 
 
         GenerateNodes();
     }
@@ -88,7 +89,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         foreach (var (name, entryPoint) in _flowchart.EntryPoints) {
             EntryPointNode entryPointNode = new(name) {
                 Parent = this,
-                X = _xOffset,
+                X = _xOffsetGlobal,
                 Y = _yOffset = 0
             };
 
@@ -100,7 +101,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
                 AppendEvent(GetLastPin(entryPointNode), cafeEvent);
             }
 
-            _xOffset += PADDING_X + entryPointNode.Width;
+            _xOffset += _xOffsetGlobal += PADDING_X + entryPointNode.Width;
         }
     }
 
@@ -148,15 +149,15 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
             End = GetFirstPin(node)
         });
 
+        _yOffset += node.Height + PADDING_Y;
         if (actionEvent.NextEvent is Event nextEvent) {
-            _yOffset += node.Height + PADDING_Y;
             AppendEvent(GetLastPin(node), nextEvent);
         }
 
         return node;
     }
 
-    private ForkEventNode AppendForkEvent(IPin parent, ForkEvent forkEvent)
+    private INode AppendForkEvent(IPin parent, ForkEvent forkEvent)
     {
         ForkEventNode node = new(forkEvent.Name) {
             Parent = this,
@@ -171,7 +172,56 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
             End = GetFirstPin(node)
         });
 
-        return node;
+        JoinEvent joinEvent = (JoinEvent)_flowchart.Events[forkEvent.JoinEventIndex];
+        JoinEventNode joinNode = new(joinEvent.Name) {
+            Parent = this,
+            X = _xOffset,
+            Y = -1,
+        };
+
+        INode? last = null;
+        double yOffset = _yOffset += node.Height + PADDING_Y + 50;
+        double xOffset = _xOffset;
+        foreach (var index in forkEvent.ForkEventIndicies) {
+            Event cafeEvent = _flowchart.Events[index];
+            _yOffset = yOffset;
+
+            if (_cache.TryGetValue(cafeEvent, out INode? existing)) {
+                Connectors?.Add(new ObservableConnector {
+                    Parent = this,
+                    Start = GetLastPin(node),
+                    End = GetFirstPin(existing)
+                });
+                continue;
+            }
+
+            if (last is not null) {
+                _xOffset += last.Width + PADDING_X;
+                _xOffsetGlobal += last.Width + PADDING_X;
+            }
+
+            last = AppendEvent(GetLastPin(node), cafeEvent);
+
+            Connectors?.Add(new ObservableConnector {
+                Parent = this,
+                Start = GetLastPin(last),
+                End = GetFirstPin(joinNode)
+            });
+
+            if (joinNode.Y < _yOffset) {
+                joinNode.Y = _yOffset + 50;
+            }
+        }
+
+        Nodes?.Add(joinNode);
+
+        _xOffset = xOffset;
+        if (joinEvent.NextEvent is Event nextEvent) {
+            _yOffset += joinNode.Height + PADDING_Y + 50;
+            return AppendEvent(GetLastPin(joinNode), nextEvent);
+        }
+
+        return joinNode;
     }
 
     private JoinEventNode AppendJoinEvent(IPin parent, JoinEvent joinEvent)
@@ -215,8 +265,8 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
             End = GetFirstPin(node)
         });
 
+        _yOffset += node.Height + PADDING_Y;
         if (subflowEvent.NextEvent is Event nextEvent) {
-            _yOffset += node.Height + PADDING_Y;
             AppendEvent(GetLastPin(node), nextEvent);
         }
 
@@ -268,6 +318,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
 
                 if (last is not null) {
                     _xOffset += last.Width + PADDING_X;
+                    _xOffsetGlobal += last.Width + PADDING_X;
                 }
 
                 last = AppendEvent(GetLastPin(node), cafeEvent);
