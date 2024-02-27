@@ -7,8 +7,8 @@
              xmlns:cafe="using:BfevLibrary.Core"
              xmlns:converters="using:CafeEventEditor.Converters"
              xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
-             Width="280"
-             Height="180"
+             Width="{Binding Width}"
+             Height="{Binding Height}"
              Padding="5"
              d:DesignHeight="450"
              d:DesignWidth="800"
@@ -27,7 +27,7 @@
         <DataTemplate DataType="{x:Type nodes:ActionEventNode}">
             <Grid RowDefinitions="Auto,*">
                 <StackPanel Spacing="5">
-                    <TextBox Text="{Binding Name}" />
+                    <TextBox Text="{Binding Name}" Watermark="Name" />
                     <ComboBox HorizontalAlignment="Stretch"
                               DisplayMemberBinding="{Binding Name}"
                               ItemsSource="{Binding Actors}"

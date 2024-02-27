@@ -14,7 +14,7 @@ using System.Diagnostics;
 namespace CafeEventEditor.ViewModels.Nodes;
 
 [DebuggerDisplay("{Name} (Action), Actor = {Actor?.Name}, Action = {Action}")]
-public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IEventNode
+public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IEventNode, IParameterizedEvent
 {
     private const string DEFAULT_NAME = "Action Event";
 
@@ -57,8 +57,8 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         };
 
         Content = view;
-        Width = view.Width;
-        Height = view.Height;
+        Width = 280;
+        Height = 180;
 
         this.AddPin(Width / 2, view.Padding.Top, 10, 10, PinAlignment.Top, "Input");
         this.AddPin(Width / 2, Height- view.Padding.Bottom, 10, 10, PinAlignment.Bottom, "Output");
