@@ -30,7 +30,7 @@
             <ColumnDefinition Width="{Binding RightPanel, Source={x:Static vm:FlowchartViewModel.Layout}}" />
         </Grid.ColumnDefinitions>
 
-        <Grid RowDefinitions="*,*">
+        <Grid Margin="15,0,0,0" RowDefinitions="*,*">
             <!--<editor:Toolbox />-->
 
             <ContentControl Grid.Row="1"
