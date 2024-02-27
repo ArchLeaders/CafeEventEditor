@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:agc="clr-namespace:AvaloniaGraphControl;assembly=AvaloniaGraphControl"
              xmlns:bfev="clr-namespace:BfevLibrary.Core;assembly=BfevLibrary"
+             xmlns:converters="using:CafeEventEditor.Converters"
              xmlns:editor="using:Avalonia.NodeEditor.Controls"
              xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
              xmlns:sys="using:System"
@@ -31,6 +32,10 @@
 
         <Grid RowDefinitions="*,*">
             <!--<editor:Toolbox />-->
+
+            <ContentControl Grid.Row="1"
+                            Content="{Binding Selected}"
+                            ContentTemplate="{Binding Selected, Converter={x:Static converters:NodeEditorConverter.Shared}}" />
         </Grid>
 
         <GridSplitter Grid.Column="1"

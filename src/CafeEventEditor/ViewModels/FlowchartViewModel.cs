@@ -22,6 +22,9 @@ public partial class FlowchartViewModel : Document
     [ObservableProperty]
     private NodeZoomBorder? _zoomBorder = new();
 
+    [ObservableProperty]
+    private INode? _selected;
+
     public FlowchartViewModel(string file) : base(Path.GetFileName(file))
     {
         Handle = CafeLoadManager.LoadFromFile(file);
@@ -35,6 +38,13 @@ public partial class FlowchartViewModel : Document
         Drawing = new FlowchartDrawingNode(Handle.Bfev.Flowchart);
         Factory = new FlowchartNodeFactory();
         Templates = Factory.CreateTemplates();
+
+        Drawing.SelectionChanged += (s, e) => {
+            if (s is ObservableDrawingNode drawing) {
+                Selected = drawing.GetSelectedNodes()?.FirstOrDefault();
+            }
+        };
+    }
 
     partial void OnZoomBorderChanged(NodeZoomBorder? value)
     {
