@@ -202,7 +202,10 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         SubflowEventNode node = new(subflowEvent.Name) {
             Parent = this,
             X = _xOffset,
-            Y = _yOffset
+            Y = _yOffset,
+            FlowchartName = subflowEvent.FlowchartName,
+            EntryPointName = subflowEvent.EntryPointName,
+            Parameters = subflowEvent.Parameters?.ToYaml() ?? string.Empty
         };
 
         Nodes?.Add(node);
