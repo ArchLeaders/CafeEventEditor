@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ae="using:AvaloniaEdit"
              xmlns:cafe="using:BfevLibrary.Core"
+             xmlns:converters="using:CafeEventEditor.Converters"
              xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
              Width="280"
              Height="180"
@@ -21,6 +23,38 @@
             </nodes:ActionEventNode.Actor>
         </nodes:ActionEventNode>
     </Design.DataContext>
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="{x:Type nodes:ActionEventNode}">
+            <Grid Margin="10,10,0,10" RowDefinitions="Auto,*">
+                <StackPanel Spacing="5">
+                    <TextBox Classes="clearButton" Text="{Binding Name}" />
+                    <ComboBox HorizontalAlignment="Stretch"
+                              DisplayMemberBinding="{Binding Name}"
+                              ItemsSource="{Binding Actors}"
+                              SelectedItem="{Binding Actor}"
+                              ToolTip.Tip="Actor" />
+                    <ComboBox HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding Actor.Actions}"
+                              SelectedItem="{Binding Action}"
+                              ToolTip.Tip="Actor Action" />
+                </StackPanel>
+
+                <Border Grid.Row="1"
+                        Margin="0,5,0,0"
+                        Background="{DynamicResource TextControlBackground}"
+                        BorderBrush="{DynamicResource TextControlBorderBrush}"
+                        BorderThickness="{DynamicResource TextControlBorderThemeThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        ToolTip.Tip="Parameters">
+                    <ae:TextEditor Padding="0,7,7,7"
+                                   VerticalAlignment="Stretch"
+                                   FontFamily="Consolas"
+                                   Initialized="TextEditor_Initialized"
+                                   ShowLineNumbers="True" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </UserControl.DataTemplates>
     <Border Padding="5"
             Background="{DynamicResource ActionNodeBrush}"
             BorderBrush="{DynamicResource TextControlForeground}"
@@ -28,7 +62,7 @@
             BoxShadow="1 1 10 #35000000"
             ClipToBounds="True"
             CornerRadius="5"
-            ToolTip.Tip="{Binding}">
+            ToolTip.Tip="{Binding Info}">
         <Grid RowDefinitions="Auto,Auto,Auto,*">
             <TextBlock Background="Transparent"
                        Text="{Binding Name}"
