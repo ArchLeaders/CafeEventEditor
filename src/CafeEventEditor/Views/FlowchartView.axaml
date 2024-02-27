@@ -41,7 +41,7 @@
                       DragCompleted="LeftPanel_DragCompleted" />
 
         <Border Grid.Column="2" ClipToBounds="True">
-            <editor:Editor DataContext="{Binding Drawing}" />
+            <editor:Editor Name="Editor" DataContext="{Binding Drawing}" />
         </Border>
 
         <GridSplitter Grid.Column="3"

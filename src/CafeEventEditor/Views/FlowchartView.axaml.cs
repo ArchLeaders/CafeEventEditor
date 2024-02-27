@@ -14,6 +14,12 @@ public partial class FlowchartView : UserControl
     {
         InitializeComponent();
         DataContext = context;
+        Editor.TemplateApplied += (s, e) => {
+            context.ZoomBorder = Editor.ZoomControl ?? throw new InvalidOperationException("""
+                Editor.ZoomBorder should not be null
+                """);
+        };
+
     }
 
     private void LeftPanel_DragCompleted(object? sender, Avalonia.Input.VectorEventArgs e)
