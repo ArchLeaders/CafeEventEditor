@@ -11,6 +11,13 @@
              d:DesignWidth="800"
              x:DataType="nodes:EntryPointNode"
              mc:Ignorable="d">
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="{x:Type nodes:EntryPointNode}">
+            <StackPanel>
+                <TextBox Text="{Binding Name}" Watermark="Entry Point Name" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.DataTemplates>
     <Border Padding="5"
             Background="{DynamicResource SystemAccentColor}"
             BorderBrush="{DynamicResource TextControlForeground}"
