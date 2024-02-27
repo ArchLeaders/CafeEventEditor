@@ -228,7 +228,10 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         SwitchEventNode node = new(switchEvent.Name) {
             Parent = this,
             X = _xOffset,
-            Y = _yOffset
+            Y = _yOffset,
+            Actor = switchEvent.Actor,
+            Query = switchEvent.ActorQuery,
+            Parameters = switchEvent.Parameters?.ToYaml() ?? string.Empty
         };
 
         Nodes?.Add(node);

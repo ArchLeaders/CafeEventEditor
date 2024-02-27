@@ -3,6 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ae="using:AvaloniaEdit"
+             xmlns:cafe="using:BfevLibrary.Core"
+             xmlns:converters="using:CafeEventEditor.Converters"
              xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
              Width="{Binding Width}"
              Height="{Binding Height}"
@@ -11,6 +14,36 @@
              d:DesignWidth="800"
              x:DataType="nodes:SwitchEventNode"
              mc:Ignorable="d">
+    <UserControl.DataTemplates>
+        <DataTemplate DataType="{x:Type nodes:SwitchEventNode}">
+            <Grid RowDefinitions="Auto,*">
+                <StackPanel Spacing="5">
+                    <TextBox Text="{Binding Name}" Watermark="Name" />
+                    <ComboBox HorizontalAlignment="Stretch"
+                              DisplayMemberBinding="{Binding Name}"
+                              ItemsSource="{Binding Actors}"
+                              SelectedItem="{Binding Actor}"
+                              ToolTip.Tip="Actor" />
+                    <ComboBox HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding Actor.Queries}"
+                              SelectedItem="{Binding Query}"
+                              ToolTip.Tip="Actor Query" />
+                </StackPanel>
+
+                <Border Grid.Row="1"
+                        Margin="0,5,0,0"
+                        Background="{DynamicResource TextControlBackground}"
+                        BorderBrush="{DynamicResource TextControlBorderBrush}"
+                        BorderThickness="{DynamicResource TextControlBorderThemeThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <ae:TextEditor Padding="7"
+                                   VerticalAlignment="Stretch"
+                                   FontFamily="Consolas"
+                                   Initialized="TextEditor_Initialized" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </UserControl.DataTemplates>
     <Border Padding="5"
             Background="{DynamicResource SwitchNodeBrush}"
             BorderBrush="{DynamicResource TextControlForeground}"
@@ -18,11 +51,47 @@
             BoxShadow="1 1 10 #35000000"
             CornerRadius="5"
             ToolTip.Tip="{Binding Name}">
-        <Grid RowDefinitions="*,Auto">
-            <TextBlock HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
+        <Grid RowDefinitions="Auto,Auto,Auto,*">
+            <TextBlock Background="Transparent"
                        Text="{Binding Name}"
+                       TextAlignment="Center"
                        TextTrimming="CharacterEllipsis" />
+
+            <StackPanel Grid.Row="1">
+                <TextBlock Margin="0,5,0,0"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Text="Actor:" />
+                <TextBlock Background="Transparent"
+                           FontSize="12"
+                           Text="{Binding Actor.Name}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="2">
+                <TextBlock Margin="0,5,0,0"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Text="Actor Query:" />
+                <TextBlock Background="Transparent"
+                           FontSize="12"
+                           Text="{Binding Query}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <Grid Grid.Row="3" RowDefinitions="Auto,*">
+                <TextBlock Margin="0,5,0,0"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Text="Parameters:" />
+                <TextBlock Grid.Row="1"
+                           Margin="0,0,0,5"
+                           Background="Transparent"
+                           FontSize="12"
+                           Text="{Binding Parameters}"
+                           TextTrimming="CharacterEllipsis" />
+            </Grid>
         </Grid>
     </Border>
 </UserControl>
