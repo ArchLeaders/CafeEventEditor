@@ -25,9 +25,9 @@
     </Design.DataContext>
     <UserControl.DataTemplates>
         <DataTemplate DataType="{x:Type nodes:ActionEventNode}">
-            <Grid Margin="10,10,0,10" RowDefinitions="Auto,*">
+            <Grid RowDefinitions="Auto,*">
                 <StackPanel Spacing="5">
-                    <TextBox Classes="clearButton" Text="{Binding Name}" />
+                    <TextBox Text="{Binding Name}" />
                     <ComboBox HorizontalAlignment="Stretch"
                               DisplayMemberBinding="{Binding Name}"
                               ItemsSource="{Binding Actors}"
@@ -44,13 +44,11 @@
                         Background="{DynamicResource TextControlBackground}"
                         BorderBrush="{DynamicResource TextControlBorderBrush}"
                         BorderThickness="{DynamicResource TextControlBorderThemeThickness}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        ToolTip.Tip="Parameters">
-                    <ae:TextEditor Padding="0,7,7,7"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <ae:TextEditor Padding="7"
                                    VerticalAlignment="Stretch"
                                    FontFamily="Consolas"
-                                   Initialized="TextEditor_Initialized"
-                                   ShowLineNumbers="True" />
+                                   Initialized="TextEditor_Initialized" />
                 </Border>
             </Grid>
         </DataTemplate>
