@@ -101,7 +101,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
                 AppendEvent(GetLastPin(entryPointNode), cafeEvent);
             }
 
-            _xOffset += _xOffsetGlobal += PADDING_X + entryPointNode.Width;
+            _xOffset = _xOffsetGlobal += PADDING_X + entryPointNode.Width;
         }
     }
 
