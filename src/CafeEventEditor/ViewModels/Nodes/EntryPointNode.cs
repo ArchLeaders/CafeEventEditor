@@ -30,7 +30,7 @@ public partial class EntryPointNode : ObservableNode, INodeTemplateProvider
         Width = view.Width;
         Height = view.Height;
 
-        this.AddPin(Width / 2, Height - view.Padding.Bottom, 10, 10, PinAlignment.Bottom, "Output");
+        this.AddPin(Width / 2, Height - view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
     }
 
     public EntryPoint GetEntryPoint()

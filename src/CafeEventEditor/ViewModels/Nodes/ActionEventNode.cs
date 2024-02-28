@@ -60,8 +60,8 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         Width = 280;
         Height = 180;
 
-        this.AddPin(Width / 2, view.Padding.Top, 10, 10, PinAlignment.Top, "Input");
-        this.AddPin(Width / 2, Height- view.Padding.Bottom, 10, 10, PinAlignment.Bottom, "Output");
+        this.AddPin(Width / 2, view.Padding.Top, 20, 20, PinAlignment.Top, "Input");
+        this.AddPin(Width / 2, Height- view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
 
         PropertyChanged += (s, e) => {
             if (e.PropertyName is not nameof(Info)) {

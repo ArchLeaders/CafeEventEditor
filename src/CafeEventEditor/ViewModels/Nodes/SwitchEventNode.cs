@@ -64,7 +64,7 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         Width = 280;
         Height = 180;
 
-        this.AddPin(Width / 2, view.Padding.Top, 10, 10, PinAlignment.Top, "Input");
+        this.AddPin(Width / 2, view.Padding.Top, 20, 20, PinAlignment.Top, "Input");
 
         PropertyChanged += (s, e) => {
             if (e.PropertyName is not nameof(Info)) {
@@ -77,16 +77,16 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
     private void AddCase()
     {
         ArgumentNullException.ThrowIfNull(Pins);
-        this.AddPin(GetNextPinOffset(), Height, 10, 10, PinAlignment.Bottom, (Pins.Count - 2).ToString());
+        this.AddPin(GetNextPinOffset(), Height, 20, 20, PinAlignment.Bottom, (Pins.Count - 2).ToString());
     }
 
     internal double GetNextPinOffset()
     {
         ArgumentNullException.ThrowIfNull(Pins);
-        double offset = Pins.Count * 15;
+        double offset = Pins.Count * 25;
 
         if (offset + 25 > Width) {
-            Width += 15;
+            Width += 25;
         }
 
         return offset;

@@ -305,7 +305,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         foreach (var switchCase in switchEvent.SwitchCases) {
             if (GetNextEvent(switchCase.EventIndex) is Event cafeEvent) {
                 _yOffset = yOffset;
-                node.AddPin(node.GetNextPinOffset(), height, 10, 10, PinAlignment.Bottom, switchCase.Value.ToString());
+                node.AddPin(node.GetNextPinOffset(), height, 20, 20, PinAlignment.Bottom, switchCase.Value.ToString());
 
                 if (_cache.TryGetValue(cafeEvent, out INode? existing)) {
                     Connectors?.Add(new ObservableConnector() {
