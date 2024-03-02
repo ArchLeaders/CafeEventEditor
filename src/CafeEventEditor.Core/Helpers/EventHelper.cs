@@ -1,7 +1,7 @@
 ﻿using Avalonia.NodeEditor.Core;
 using BfevLibrary.Core;
 using BfevLibrary.Core.Collections;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
 
 namespace CafeEventEditor.Core.Helpers;
 
