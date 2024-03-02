@@ -1,4 +1,4 @@
-﻿namespace CafeEventEditor.Core.Modals;
+﻿namespace CafeEventEditor.Core.Models;
 
 public interface IParameterizedEvent
 {

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Styling;
 using AvaloniaEdit;
 using AvaloniaEdit.TextMate;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
 using TextMateSharp.Grammars;
 
 namespace CafeEventEditor.Extensions;
