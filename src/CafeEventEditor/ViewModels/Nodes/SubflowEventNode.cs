@@ -2,8 +2,10 @@
 using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
+using CafeEventEditor.Core.Converters;
 using CafeEventEditor.Core.Helpers;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
+using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -39,6 +41,13 @@ public partial class SubflowEventNode : ObservableNode, INodeTemplateProvider, I
     {
     }
 
+    public SubflowEventNode(SubflowEvent subflowEvent) : this(subflowEvent.Name)
+    {
+        FlowchartName = subflowEvent.FlowchartName;
+        EntryPointName = subflowEvent.EntryPointName;
+        Parameters = subflowEvent.Parameters?.ToYaml() ?? string.Empty;
+    }
+
     public SubflowEventNode(string name)
     {
         Name = name;
@@ -60,8 +69,19 @@ public partial class SubflowEventNode : ObservableNode, INodeTemplateProvider, I
         };
     }
 
-    public Event Append(EventHelper events, ActorHelper actors)
+    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
     {
         throw new NotImplementedException();
+    }
+
+    public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
+    {
+        if (cafeEvent is SubflowEvent subflowEvent && subflowEvent.NextEvent is Event next) {
+            return drawing.AppendEvent([node.GetLastPin()], next);
+        }
+
+        // Always return a node because
+        // forks needs an event to join
+        return [node];
     }
 }

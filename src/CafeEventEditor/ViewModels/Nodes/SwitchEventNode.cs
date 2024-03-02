@@ -1,11 +1,13 @@
-﻿using Avalonia.NodeEditor.Core;
+﻿using Avalonia.Controls;
+using Avalonia.NodeEditor.Core;
 using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
 using CafeEventEditor.Components;
 using CafeEventEditor.Core.Converters;
 using CafeEventEditor.Core.Helpers;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
+using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -53,6 +55,13 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
     {
     }
 
+    public SwitchEventNode(SwitchEvent switchEvent) : this(switchEvent.Name)
+    {
+        Actor = switchEvent.Actor;
+        Query = switchEvent.ActorQuery;
+        Parameters = switchEvent.Parameters?.ToYaml() ?? string.Empty;
+    }
+
     public SwitchEventNode(string name)
     {
         Name = name;
@@ -74,13 +83,23 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
     }
 
     [RelayCommand]
-    private void AddCase()
+    public void AddCase()
     {
         ArgumentNullException.ThrowIfNull(Pins);
-        this.AddPin(GetNextPinOffset(), Height, 20, 20, PinAlignment.Bottom, (Pins.Count - 2).ToString());
+        AddCase(Pins.Count - 2);
     }
 
-    internal double GetNextPinOffset()
+    public void AddCase(int index)
+    {
+        double height = Height;
+        if (Content is UserControl control) {
+            height -= control.Padding.Bottom;
+        }
+
+        this.AddPin(GetNextPinOffset(), height, 20, 20, PinAlignment.Bottom, $"[{index}]");
+    }
+
+    private double GetNextPinOffset()
     {
         ArgumentNullException.ThrowIfNull(Pins);
         double offset = Pins.Count * 25;
@@ -92,7 +111,7 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         return offset;
     }
 
-    public Event Append(EventHelper events, ActorHelper actors)
+    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
     {
         ArgumentNullException.ThrowIfNull(Actor, nameof(Actor));
         ArgumentNullException.ThrowIfNull(Query, nameof(Query));
@@ -104,6 +123,38 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         };
 
         // TODO: Set case indices
+
         return switchEvent;
+    }
+
+    public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
+    {
+        if (node is not SwitchEventNode switchEventNode) {
+            throw new ArgumentException($"""
+                Expected '{nameof(SwitchEventNode)}' but received '{node.GetType().Name}'
+                """, nameof(node));
+        }
+
+        if (cafeEvent is not SwitchEvent switchEvent) {
+            throw new ArgumentException($"""
+                Expected '{nameof(SwitchEvent)}' but received '{cafeEvent.Type}Event'
+                """, nameof(cafeEvent));
+        }
+
+        double initialYOffset = drawing.YOffset;
+
+        List<INode> cases = [];
+        foreach (var (caseIndex, caseEvent) in switchEvent.SwitchCases.Select(x => (x.Value, Event: drawing.GetEvent(x.EventIndex)!)).Where(x => x.Event is not null)) {
+            switchEventNode.AddCase(caseIndex);
+
+            drawing.YOffset = initialYOffset;
+            cases.AddRange(
+                drawing.AppendEvent([node.GetLastPin()], caseEvent, moveX: cases.Count > 0)
+            );
+
+            drawing.UseAbsoluteXOffset();
+        }
+
+        return cases;
     }
 }

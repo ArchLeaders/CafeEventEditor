@@ -1,33 +1,29 @@
-﻿using Avalonia.Controls;
-using Avalonia.NodeEditor.Core;
-using Avalonia.NodeEditor.Core.Mvvm.Extensions;
+﻿using Avalonia.NodeEditor.Core;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
-using CafeEventEditor.Core.Converters;
 using CafeEventEditor.Core.Helpers;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
+using CafeEventEditor.Extensions;
 using CafeEventEditor.ViewModels.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 
 namespace CafeEventEditor.Components;
 
-public partial class FlowchartDrawingNode : ObservableDrawingNode
+public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDrawingNode
 {
-    private const double PADDING_X = 30.0;
-    private const double PADDING_Y = 30.0;
-
     private readonly Flowchart _flowchart;
-    private readonly Dictionary<Event, INode> _cache = [];
-    private double _xOffsetGlobal = 0;
-    private double _xOffset = 0;
-    private double _yOffset = 0;
+    private readonly Dictionary<Event, IEventNode> _drawnEvents = [];
 
     [ObservableProperty]
     private ObservableCollection<Actor> _actors;
 
     [ObservableProperty]
     private ObservableCollection<EntryPointNode> _entryPointNodes = [];
+
+    public double CurrentForkOffset { get; set; } = -1;
+    public double XOffset { get; set; } = 0;
+    public double YOffset { get; set; } = 0;
 
     public FlowchartDrawingNode(Flowchart flowchart)
     {
@@ -41,7 +37,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         SnapX = 10;
         SnapY = 10; 
 
-        GenerateNodes();
+        GenerateDrawing();
     }
 
     public Flowchart ToFlowchart()
@@ -56,7 +52,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
 
         foreach (var node in Nodes) {
             if (node is IEventNode eventNode) {
-                eventNode.Append(events, actors);
+                eventNode.AppendCafeEvent(events, actors);
                 continue;
             }
             
@@ -82,270 +78,113 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode
         return base.CanConnectPin(pin);
     }
 
-    private void GenerateNodes()
+    private void GenerateDrawing()
     {
         ArgumentNullException.ThrowIfNull(Nodes, nameof(Nodes));
 
         foreach (var (name, entryPoint) in _flowchart.EntryPoints) {
+            UseAbsoluteXOffset();
+
             EntryPointNode entryPointNode = new(name) {
                 Parent = this,
-                X = _xOffsetGlobal,
-                Y = _yOffset = 0
+                X = XOffset,
+                Y = YOffset = 0
             };
 
-            Nodes.Add(entryPointNode);
-            EntryPointNodes.Add(entryPointNode);
-            _yOffset += entryPointNode.Height + PADDING_Y;
-
-            if (GetNextEvent(entryPoint.EventIndex) is Event cafeEvent) {
-                AppendEvent(GetLastPin(entryPointNode), cafeEvent);
+            if (XOffset > 0) {
+                MoveX(entryPointNode);
+                entryPointNode.X = XOffset;
             }
 
-            _xOffset = _xOffsetGlobal += PADDING_X + entryPointNode.Width;
+            CurrentForkOffset = -1;
+
+            Nodes.Add(entryPointNode);
+            MoveY(entryPointNode);
+
+            if (GetEvent(entryPoint.EventIndex) is Event cafeEvent) {
+                AppendEvent([entryPointNode.GetLastPin()], cafeEvent);
+            }
         }
+
+        Width = YOffset;
+        Height = YOffset;
     }
 
-    private INode AppendEvent(IPin parent, Event cafeEvent)
+    public IEnumerable<INode> AppendEvent(IEnumerable<IPin> parents, Event cafeEvent, bool moveX = false)
     {
-        if (_cache.TryGetValue(cafeEvent, out INode? cache)) {
-            Connectors?.Add(new ObservableConnector() {
-                Parent = this,
-                Start = parent,
-                End = GetFirstPin(cache)
-            });
+        ArgumentNullException.ThrowIfNull(Nodes, nameof(Nodes));
+        ArgumentNullException.ThrowIfNull(Connectors, nameof(Connectors));
 
-            return cache;
+        if (_drawnEvents.TryGetValue(cafeEvent, out IEventNode? drawn)) {
+            foreach (var parent in parents) {
+                Connectors.Add(new ObservableConnector() {
+                    Parent = this,
+                    Start = parent,
+                    End = drawn.GetFirstPin()
+                });
+            }
+
+            // Assume that a fork will only have
+            // new children so returning the end
+            // of each branch is not needed here
+            return [];
         }
 
-        INode result = cafeEvent.Type switch {
-            EventType.Action => AppendActionEvent(parent, (ActionEvent)cafeEvent),
-            EventType.Fork => AppendForkEvent(parent, (ForkEvent)cafeEvent),
-            EventType.Join => AppendJoinEvent(parent, (JoinEvent)cafeEvent),
-            EventType.Subflow => AppendSubflowEvent(parent, (SubflowEvent)cafeEvent),
-            EventType.Switch => AppendSwitchEvent(parent, (SwitchEvent)cafeEvent),
+        IEventNode result = _drawnEvents[cafeEvent] = cafeEvent.Type switch {
+            EventType.Action => new ActionEventNode((ActionEvent)cafeEvent),
+            EventType.Fork => new ForkEventNode((ForkEvent)cafeEvent),
+            EventType.Join => new JoinEventNode((JoinEvent)cafeEvent),
+            EventType.Subflow => new SubflowEventNode((SubflowEvent)cafeEvent),
+            EventType.Switch => new SwitchEventNode((SwitchEvent)cafeEvent),
             _ => throw new InvalidOperationException($"""
                 Invalid event type '{cafeEvent.Type}'
                 """)
         };
 
-        return _cache[cafeEvent] = result;
-    }
-
-    private ActionEventNode AppendActionEvent(IPin parent, ActionEvent actionEvent)
-    {
-        ActionEventNode node = new(actionEvent.Name) {
-            Actor = actionEvent.Actor,
-            Action = actionEvent.ActorAction,
-            Parameters = actionEvent.Parameters?.ToYaml() ?? string.Empty,
-            Parent = this,
-            X = _xOffset,
-            Y = _yOffset
-        };
-
-        Nodes?.Add(node);
-        Connectors?.Add(new ObservableConnector() {
-            Parent = this,
-            Start = parent,
-            End = GetFirstPin(node)
-        });
-
-        _yOffset += node.Height + PADDING_Y;
-        if (actionEvent.NextEvent is Event nextEvent) {
-            AppendEvent(GetLastPin(node), nextEvent);
+        if (moveX) {
+            MoveX(result);
         }
 
-        return node;
-    }
+        result.Parent = this;
+        result.X = XOffset;
+        result.Y = YOffset;
 
-    private INode AppendForkEvent(IPin parent, ForkEvent forkEvent)
-    {
-        ForkEventNode node = new(forkEvent.Name) {
-            Parent = this,
-            X = _xOffset,
-            Y = _yOffset
-        };
-
-        Nodes?.Add(node);
-        Connectors?.Add(new ObservableConnector() {
-            Parent = this,
-            Start = parent,
-            End = GetFirstPin(node)
-        });
-
-        JoinEvent joinEvent = (JoinEvent)_flowchart.Events[forkEvent.JoinEventIndex];
-        JoinEventNode joinNode = new(joinEvent.Name) {
-            Parent = this,
-            X = _xOffset,
-            Y = -1,
-        };
-
-        INode? last = null;
-        double yOffset = _yOffset += node.Height + PADDING_Y + 50;
-        double xOffset = _xOffset;
-        foreach (var index in forkEvent.ForkEventIndicies) {
-            Event cafeEvent = _flowchart.Events[index];
-            _yOffset = yOffset;
-
-            if (_cache.TryGetValue(cafeEvent, out INode? existing)) {
-                Connectors?.Add(new ObservableConnector {
-                    Parent = this,
-                    Start = GetLastPin(node),
-                    End = GetFirstPin(existing)
-                });
-                continue;
-            }
-
-            if (last is not null) {
-                _xOffset += last.Width + PADDING_X;
-                _xOffsetGlobal += last.Width + PADDING_X;
-            }
-
-            last = AppendEvent(GetLastPin(node), cafeEvent);
-
-            Connectors?.Add(new ObservableConnector {
+        Nodes.Add(result);
+        foreach (var parent in parents) {
+            Connectors.Add(new ObservableConnector() {
                 Parent = this,
-                Start = GetLastPin(last),
-                End = GetFirstPin(joinNode)
+                Start = parent,
+                End = result.GetFirstPin()
             });
-
-            if (joinNode.Y < _yOffset) {
-                joinNode.Y = _yOffset + 50;
-            }
         }
 
-        Nodes?.Add(joinNode);
+        MoveY(result);
 
-        _xOffset = xOffset;
-        if (joinEvent.NextEvent is Event nextEvent) {
-            _yOffset += joinNode.Height + PADDING_Y + 50;
-            return AppendEvent(GetLastPin(joinNode), nextEvent);
-        }
-
-        return joinNode;
+        return result.AppendRecursive(this, result, cafeEvent);
     }
 
-    private JoinEventNode AppendJoinEvent(IPin parent, JoinEvent joinEvent)
+    public Event? GetEvent(int index)
     {
-        JoinEventNode node = new(joinEvent.Name) {
-            Parent = this,
-            X = _xOffset,
-            Y = _yOffset
-        };
-
-        Nodes?.Add(node);
-        Connectors?.Add(new ObservableConnector() {
-            Parent = this,
-            Start = parent,
-            End = GetFirstPin(node)
-        });
-
-        if (joinEvent.NextEvent is Event nextEvent) {
-            _yOffset += node.Height + PADDING_Y;
-            AppendEvent(GetLastPin(node), nextEvent);
-        }
-
-        return node;
+        return index < _flowchart.Events.Count && index > -1 ? _flowchart.Events[index] : null;
     }
 
-    private SubflowEventNode AppendSubflowEvent(IPin parent, SubflowEvent subflowEvent)
+    public const double X_PADDING = 30.0;
+    public const double Y_PADDING = 30.0;
+
+    public void MoveX(INode node) => MoveX(node.Width);
+    public void MoveX(double offset)
     {
-        SubflowEventNode node = new(subflowEvent.Name) {
-            Parent = this,
-            X = _xOffset,
-            Y = _yOffset,
-            FlowchartName = subflowEvent.FlowchartName,
-            EntryPointName = subflowEvent.EntryPointName,
-            Parameters = subflowEvent.Parameters?.ToYaml() ?? string.Empty
-        };
-
-        Nodes?.Add(node);
-        Connectors?.Add(new ObservableConnector() {
-            Parent = this,
-            Start = parent,
-            End = GetFirstPin(node)
-        });
-
-        _yOffset += node.Height + PADDING_Y;
-        if (subflowEvent.NextEvent is Event nextEvent) {
-            AppendEvent(GetLastPin(node), nextEvent);
-        }
-
-        return node;
+        XOffset += offset + X_PADDING;
     }
 
-    private SwitchEventNode AppendSwitchEvent(IPin parent, SwitchEvent switchEvent)
+    public void MoveY(INode node) => MoveY(node.Height);
+    public void MoveY(double offset)
     {
-        SwitchEventNode node = new(switchEvent.Name) {
-            Parent = this,
-            X = _xOffset,
-            Y = _yOffset,
-            Actor = switchEvent.Actor,
-            Query = switchEvent.ActorQuery,
-            Parameters = switchEvent.Parameters?.ToYaml() ?? string.Empty
-        };
-
-        Nodes?.Add(node);
-        Connectors?.Add(new ObservableConnector() {
-            Parent = this,
-            Start = parent,
-            End = GetFirstPin(node)
-        });
-
-        double height = node.Height;
-        if (node.Content is UserControl view) {
-            height -= view.Padding.Bottom;
-        }
-
-        // Set the cache early so
-        // that the cases find it
-        _cache[switchEvent] = node;
-
-        INode? last = null;
-        double yOffset = _yOffset += node.Height + PADDING_Y + 50;
-        foreach (var switchCase in switchEvent.SwitchCases) {
-            if (GetNextEvent(switchCase.EventIndex) is Event cafeEvent) {
-                _yOffset = yOffset;
-                node.AddPin(node.GetNextPinOffset(), height, 20, 20, PinAlignment.Bottom, switchCase.Value.ToString());
-
-                if (_cache.TryGetValue(cafeEvent, out INode? existing)) {
-                    Connectors?.Add(new ObservableConnector() {
-                        Parent = this,
-                        Start = GetLastPin(node),
-                        End = GetFirstPin(existing)
-                    });
-                    continue;
-                }
-
-                if (last is not null) {
-                    _xOffset += last.Width + PADDING_X;
-                    _xOffsetGlobal += last.Width + PADDING_X;
-                }
-
-                last = AppendEvent(GetLastPin(node), cafeEvent);
-            }
-        }
-
-        return node;
+        YOffset += offset + Y_PADDING;
     }
 
-    private static IPin GetFirstPin(INode node)
+    public void UseAbsoluteXOffset()
     {
-        ArgumentNullException.ThrowIfNull(node.Pins);
-        return node.Pins[0];
-    }
-
-    private static IPin GetLastPin(INode node)
-    {
-        ArgumentNullException.ThrowIfNull(node.Pins);
-        return node.Pins[^1];
-    }
-
-    private Event? GetNextEvent(int index)
-    {
-        if (index > -1 && index < _flowchart.Events.Count) {
-            return _flowchart.Events[index];
-        }
-
-        return null;
+        XOffset = CurrentForkOffset > 0 ? CurrentForkOffset : XOffset;
     }
 }

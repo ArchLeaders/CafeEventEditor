@@ -3,7 +3,8 @@ using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
 using CafeEventEditor.Core.Helpers;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
+using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
 
 namespace CafeEventEditor.ViewModels.Nodes;
@@ -25,6 +26,11 @@ public class JoinEventNode : ObservableNode, INodeTemplateProvider, IEventNode
     {
     }
 
+    public JoinEventNode(JoinEvent joinEvent) : this(joinEvent.Name)
+    {
+        
+    }
+
     public JoinEventNode(string name)
     {
         Name = name;
@@ -40,8 +46,19 @@ public class JoinEventNode : ObservableNode, INodeTemplateProvider, IEventNode
         this.AddPin(Width / 2, Height- view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
     }
 
-    public Event Append(EventHelper events, ActorHelper actors)
+    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
     {
         throw new NotImplementedException();
+    }
+
+    public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
+    {
+        if (cafeEvent is JoinEvent joinEvent && joinEvent.NextEvent is Event next) {
+            return drawing.AppendEvent([node.GetLastPin()], next);
+        }
+
+        // Always return a node because
+        // forks needs an event to join
+        return [node];
     }
 }

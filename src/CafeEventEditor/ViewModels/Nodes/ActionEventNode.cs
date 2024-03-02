@@ -5,7 +5,8 @@ using BfevLibrary.Core;
 using CafeEventEditor.Components;
 using CafeEventEditor.Core.Converters;
 using CafeEventEditor.Core.Helpers;
-using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Core.Models;
+using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
@@ -33,7 +34,13 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         }
     }
 
-    public string Info => ToString();
+    public string Info => $"""
+        Name: {Name}
+        Actor: {Actor?.Name ?? "~"}
+        Action: {Action}
+        Parameters:
+        - {Parameters.Replace("\r", string.Empty).Trim('\n').Replace("\n", "\n- ")}
+        """;
 
     [ObservableProperty]
     private Actor? _actor;
@@ -47,6 +54,13 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
     [Obsolete("This ctor is only for the designer", error: true)]
     public ActionEventNode()
     {
+    }
+
+    public ActionEventNode(ActionEvent actionEvent) : this(actionEvent.Name)
+    {
+        Actor = actionEvent.Actor;
+        Action = actionEvent.ActorAction;
+        Parameters = actionEvent.Parameters?.ToYaml() ?? string.Empty;
     }
 
     public ActionEventNode(string name)
@@ -70,7 +84,7 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         };
     }
 
-    public Event Append(EventHelper events, ActorHelper actors)
+    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
     {
         ArgumentNullException.ThrowIfNull(Actor, nameof(Actor));
         ArgumentNullException.ThrowIfNull(Action, nameof(Action));
@@ -85,14 +99,14 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         return actionEvent;
     }
 
-    public override string ToString()
+    public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
     {
-        return $"""
-            Name: {Name}
-            Actor: {Actor?.Name ?? "~"}
-            Action: {Action}
-            Parameters:
-            - {Parameters.Replace("\r", string.Empty).Trim('\n').Replace("\n", "\n- ")}
-            """;
+        if (cafeEvent is ActionEvent actionEvent && actionEvent.NextEvent is Event next) {
+            return drawing.AppendEvent([node.GetLastPin()], next);
+        }
+
+        // Always return a node because
+        // forks needs an event to join
+        return [node];
     }
 }
