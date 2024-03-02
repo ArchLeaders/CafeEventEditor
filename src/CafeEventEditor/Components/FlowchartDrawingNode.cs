@@ -168,8 +168,8 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
         return index < _flowchart.Events.Count && index > -1 ? _flowchart.Events[index] : null;
     }
 
-    public const double X_PADDING = 30.0;
-    public const double Y_PADDING = 30.0;
+    public const double X_PADDING = 60.0;
+    public const double Y_PADDING = 60.0;
 
     public void MoveX(INode node) => MoveX(node.Width);
     public void MoveX(double offset)
