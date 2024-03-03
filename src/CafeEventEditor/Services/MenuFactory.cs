@@ -119,6 +119,10 @@ public class MenuFactory(TopLevel? topLevel) : IMenuFactory
             catch (Exception ex) {
                 AppStatus.Set($"Failed to execute action: {attribute.Name}", "fa-regular fa-circle-xmark", isWorkingStatus: false, temporaryStatusTime: 3, LogLevel.Error);
                 AppLog.WriteError(ex);
+
+#if DEBUG
+                throw;
+#endif
             }
         });
 
