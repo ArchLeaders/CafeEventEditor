@@ -4,8 +4,8 @@ using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
 using CafeEventEditor.Components;
+using CafeEventEditor.Core.Components;
 using CafeEventEditor.Core.Converters;
-using CafeEventEditor.Core.Helpers;
 using CafeEventEditor.Core.Models;
 using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
@@ -111,18 +111,26 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         return offset;
     }
 
-    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
+    public Event BuildRecursive(FlowchartBuilderContext context)
     {
+        ArgumentNullException.ThrowIfNull(Pins, nameof(Pins));
         ArgumentNullException.ThrowIfNull(Actor, nameof(Actor));
         ArgumentNullException.ThrowIfNull(Query, nameof(Query));
 
         SwitchEvent switchEvent = new(Name ?? string.Empty) {
-            ActorIndex = actors.GetActorIndex(Actor),
-            ActorQueryIndex = ActorHelper.GetActorQueryIndex(Actor, Query),
+            ActorIndex = context.GetActorIndex(Actor),
+            ActorQueryIndex = context.GetActorQueryIndex(Actor, Query),
             Parameters = Parameters.ParseCafeContainer()
         };
 
-        // TODO: Set case indices
+        int switchCaseCount = Pins.Count - 1;
+        switchEvent.SwitchCases = new(switchCaseCount);
+
+        for (int i = 0; i < switchCaseCount;) {
+            switchEvent.SwitchCases.Add(
+                new(i, (ushort)context.GetEventIndex(this, ++i))
+            );
+        }
 
         return switchEvent;
     }
