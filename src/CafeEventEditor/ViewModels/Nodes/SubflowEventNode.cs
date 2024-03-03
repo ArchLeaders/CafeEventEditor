@@ -2,8 +2,8 @@
 using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
+using CafeEventEditor.Core.Components;
 using CafeEventEditor.Core.Converters;
-using CafeEventEditor.Core.Helpers;
 using CafeEventEditor.Core.Models;
 using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
@@ -69,9 +69,14 @@ public partial class SubflowEventNode : ObservableNode, INodeTemplateProvider, I
         };
     }
 
-    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
+    public Event BuildRecursive(FlowchartBuilderContext context)
     {
-        throw new NotImplementedException();
+        return new SubflowEvent(Name ?? string.Empty) {
+            FlowchartName = FlowchartName,
+            EntryPointName = EntryPointName,
+            Parameters = string.IsNullOrEmpty(Parameters) ? [] : Parameters.ParseCafeContainer(),
+            NextEventIndex = context.GetEventIndex(this)
+        };
     }
 
     public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
