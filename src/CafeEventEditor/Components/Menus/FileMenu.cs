@@ -23,12 +23,7 @@ public class FileMenu
     public static async Task Save()
     {
         if (DocumentManager.Shared.Current is FlowchartViewModel flowchartViewModel) {
-            AppStatus.Set($"Saving", "fa-solid fa-floppy-disk",
-                isWorkingStatus: true, logLevel: LogLevel.Info);
-
             await flowchartViewModel.Save();
-            AppStatus.Set($"Saved Successfully", "fa-regular fa-circle-check",
-                isWorkingStatus: false, temporaryStatusTime: 1.5, LogLevel.Info);
         }
     }
 

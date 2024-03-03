@@ -5,6 +5,7 @@ using BfevLibrary.Core;
 using CafeEventEditor.Components;
 using CafeEventEditor.Components.Models;
 using CafeEventEditor.Core.Components;
+using CafeEventEditor.Core.Modals;
 using CafeEventEditor.Services;
 using CafeEventEditor.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -55,6 +56,10 @@ public partial class FlowchartViewModel : Document
                 """);
         }
 
+        AppStatus.Set($"Saving {drawing.Name}", "fa-solid fa-floppy-disk",
+                isWorkingStatus: true, logLevel: LogLevel.Info);
+
+
         Handle.Bfev.Flowcharts.Clear();
 
         Flowchart flowchart = drawing.BuildFlowchart();
@@ -63,6 +68,9 @@ public partial class FlowchartViewModel : Document
 
         byte[] data = Handle.Bfev.ToBinary();
         Handle.Writer(data);
+
+        AppStatus.Set($"Saved {drawing.Name} Successfully", "fa-regular fa-circle-check",
+                isWorkingStatus: false, temporaryStatusTime: 1.5, LogLevel.Info);
 
         return Task.CompletedTask;
     }
