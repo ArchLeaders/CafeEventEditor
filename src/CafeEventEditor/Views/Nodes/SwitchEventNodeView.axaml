@@ -50,7 +50,7 @@
             BorderThickness="1"
             BoxShadow="1 1 10 #35000000"
             CornerRadius="5"
-            ToolTip.Tip="{Binding Name}">
+            ToolTip.Tip="{Binding Info}">
         <Grid RowDefinitions="Auto,Auto,Auto,*">
             <TextBlock Background="Transparent"
                        Text="{Binding Name}"
