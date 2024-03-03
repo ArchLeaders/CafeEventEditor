@@ -41,20 +41,22 @@ public class FlowchartBuilderContext
         }
 
         if (Indices.TryGetValue(nextEventNode, out short index)) {
-            return index;
+            return nextEventNode is IJoinEventNode ? (short)-1 : index;
         }
 
         if (nextEventNode.BuildRecursive(this) is not Event cafeEvent) {
             return -1;
         }
 
-        if (cafeEvent is JoinEvent) {
-            return -1;
+        // Check again because BuildRecursive
+        // can mutate the indices
+        if (Indices.TryGetValue(nextEventNode, out index)) {
+            return nextEventNode is IJoinEventNode ? (short)-1 : index;
         }
 
         Indices[nextEventNode] = index = Convert.ToInt16(Events.Count);
         Events.Add(cafeEvent);
-        return index;
+        return cafeEvent is JoinEvent ? (short)-1 : index;
     }
 
     public short GetEventIndex(Event cafeEvent, IEventNode node)

@@ -9,7 +9,7 @@ using CafeEventEditor.Views.Nodes;
 
 namespace CafeEventEditor.ViewModels.Nodes;
 
-public class JoinEventNode : ObservableNode, INodeTemplateProvider, IEventNode
+public class JoinEventNode : ObservableNode, INodeTemplateProvider, IJoinEventNode, IEventNode
 {
     private const string DEFAULT_NAME = "Join Event";
 
