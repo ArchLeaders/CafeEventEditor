@@ -2,7 +2,7 @@
 
 namespace CafeEventEditor.Core.Components;
 
-public delegate Task CafeWriter(Span<byte> data);
+public delegate void CafeWriter(Span<byte> data);
 
 public class CafeWriterHandle(BfevFile bfev, CafeWriter writer)
 {

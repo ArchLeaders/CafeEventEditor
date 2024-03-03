@@ -13,9 +13,7 @@ public class CafeLoadManager
 
     public static CafeWriterHandle LoadFromFile(string file)
     {
-        CafeWriter write = (_) => {
-            return Task.CompletedTask;
-        };
+        CafeWriter write = (_) => { };
 
         using FileStream fs = File.OpenRead(file);
         int size = (int)fs.Length;
@@ -29,7 +27,6 @@ public class CafeLoadManager
         if (isZsCompressed) {
             write += (data) => {
                 data = ZstdHelper.Compress(data, dictionaryId);
-                return Task.CompletedTask;
             };
         }
 
@@ -38,13 +35,18 @@ public class CafeLoadManager
 
             write += (data) => {
                 data = Yaz0.Compress(data);
-                return Task.CompletedTask;
             };
         }
 
         if (data.Read<uint>() == SARC_MAGIC) {
             throw new NotImplementedException("SARC reading is not implemented");
         }
+
+        write += (data) => {
+            using FileStream fs = File.Create(file);
+            fs.Write(data);
+            return;
+        };
 
         // TODO: Support FromBinary(span)
         BfevFile bfev = BfevFile.FromBinary(data.ToArray());
