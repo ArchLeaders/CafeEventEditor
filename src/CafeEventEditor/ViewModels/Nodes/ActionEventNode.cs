@@ -3,8 +3,8 @@ using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
 using CafeEventEditor.Components;
+using CafeEventEditor.Core.Components;
 using CafeEventEditor.Core.Converters;
-using CafeEventEditor.Core.Helpers;
 using CafeEventEditor.Core.Models;
 using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
@@ -84,19 +84,17 @@ public partial class ActionEventNode : ObservableNode, INodeTemplateProvider, IE
         };
     }
 
-    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
+    public Event BuildRecursive(FlowchartBuilderContext context)
     {
         ArgumentNullException.ThrowIfNull(Actor, nameof(Actor));
         ArgumentNullException.ThrowIfNull(Action, nameof(Action));
 
-        ActionEvent actionEvent = new(Name ?? string.Empty) {
-            ActorIndex = actors.GetActorIndex(Actor),
-            ActorActionIndex = ActorHelper.GetActorActionIndex(Actor, Action),
-            Parameters = string.IsNullOrEmpty(Parameters) ? [] : Parameters.ParseCafeContainer()
+        return new ActionEvent(Name ?? string.Empty) {
+            ActorIndex = context.GetActorIndex(Actor),
+            ActorActionIndex = context.GetActorActionIndex(Actor, Action),
+            Parameters = string.IsNullOrEmpty(Parameters) ? [] : Parameters.ParseCafeContainer(),
+            NextEventIndex = context.GetEventIndex(this)
         };
-
-        actionEvent.NextEventIndex = events.GetEventIndex(actionEvent, this.GetNextNode());
-        return actionEvent;
     }
 
     public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
