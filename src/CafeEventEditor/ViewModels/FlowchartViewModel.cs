@@ -1,6 +1,7 @@
 ﻿using Avalonia.NodeEditor.Controls;
 using Avalonia.NodeEditor.Core;
 using Avalonia.NodeEditor.Mvvm;
+using BfevLibrary.Core;
 using CafeEventEditor.Components;
 using CafeEventEditor.Components.Models;
 using CafeEventEditor.Core.Components;
@@ -44,6 +45,26 @@ public partial class FlowchartViewModel : Document
                 Selected = drawing.GetSelectedNodes()?.FirstOrDefault();
             }
         };
+    }
+
+    public Task Save()
+    {
+        if (Drawing is not FlowchartDrawingNode drawing) {
+            throw new InvalidOperationException($"""
+                Expected {nameof(FlowchartDrawingNode)} but found '{Drawing?.GetType().Name ?? "NULL"}'
+                """);
+        }
+
+        Handle.Bfev.Flowcharts.Clear();
+
+        Flowchart flowchart = drawing.BuildFlowchart();
+        Handle.Bfev.Flowcharts[flowchart.Name] = flowchart;
+        Handle.Bfev.FileName = flowchart.Name;
+
+        byte[] data = Handle.Bfev.ToBinary();
+        Handle.Writer(data);
+
+        return Task.CompletedTask;
     }
 
     partial void OnZoomBorderChanged(NodeZoomBorder? value)
