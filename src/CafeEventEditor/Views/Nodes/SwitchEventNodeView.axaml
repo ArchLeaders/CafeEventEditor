@@ -7,6 +7,7 @@
              xmlns:cafe="using:BfevLibrary.Core"
              xmlns:converters="using:CafeEventEditor.Converters"
              xmlns:nodes="using:CafeEventEditor.ViewModels.Nodes"
+             xmlns:pi="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
              Width="{Binding Width}"
              Height="{Binding Height}"
              Padding="5"
@@ -16,7 +17,7 @@
              mc:Ignorable="d">
     <UserControl.DataTemplates>
         <DataTemplate DataType="{x:Type nodes:SwitchEventNode}">
-            <Grid RowDefinitions="Auto,*">
+            <Grid RowDefinitions="Auto,*,Auto">
                 <StackPanel Spacing="5">
                     <TextBox Text="{Binding Name}" Watermark="Name" />
                     <ComboBox HorizontalAlignment="Stretch"
@@ -41,6 +42,23 @@
                                    FontFamily="Consolas"
                                    Initialized="TextEditor_Initialized" />
                 </Border>
+
+                <StackPanel Grid.Row="3"
+                            Margin="0,5,0,0"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="3">
+                    <Button Padding="5"
+                            Command="{Binding RemoveCaseCommand}"
+                            ToolTip.Tip="Remove Switch Case">
+                        <pi:Icon Value="fa-solid fa-minus" />
+                    </Button>
+                    <Button Padding="5"
+                            Command="{Binding AddCaseCommand}"
+                            ToolTip.Tip="Add Switch Case">
+                        <pi:Icon Value="fa-solid fa-plus" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </DataTemplate>
     </UserControl.DataTemplates>

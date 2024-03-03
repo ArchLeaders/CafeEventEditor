@@ -18,6 +18,7 @@ namespace CafeEventEditor.ViewModels.Nodes;
 public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IEventNode, IParameterizedEvent
 {
     private const string DEFAULT_NAME = "Switch Event";
+    private const double MIN_WIDTH = 280;
 
     public static INodeTemplate Template { get; } = new ObservableNodeTemplate(() => new SwitchEventNode()) {
         Preview = new SwitchEventNode(DEFAULT_NAME),
@@ -70,7 +71,7 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         };
 
         Content = view;
-        Width = 280;
+        Width = MIN_WIDTH;
         Height = 180;
 
         this.AddPin(Width / 2, view.Padding.Top, 20, 20, PinAlignment.Top, "Input");
@@ -89,6 +90,26 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         AddCase(Pins.Count - 2);
     }
 
+    [RelayCommand]
+    public void RemoveCase()
+    {
+        ArgumentNullException.ThrowIfNull(Pins);
+
+        if (Parent is IDrawingNode drawing && drawing.Connectors is not null) {
+            IPin last = Pins[^1];
+            foreach (var connector in drawing.Connectors.Where(x => x.Start == last || x.End == last).ToArray()) {
+                drawing.Connectors.Remove(connector);
+            }
+        }
+        
+        Pins.RemoveAt(Pins.Count - 1);
+
+        double resizedWidth = Pins.Count * 28;
+        if (resizedWidth >= MIN_WIDTH) {
+            Width = resizedWidth;
+        }
+    }
+
     public void AddCase(int index)
     {
         double height = Height;
@@ -102,10 +123,10 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
     private double GetNextPinOffset()
     {
         ArgumentNullException.ThrowIfNull(Pins);
-        double offset = Pins.Count * 25;
+        double offset = Pins.Count * 28;
 
-        if (offset + 25 > Width) {
-            Width += 25;
+        if (offset + 28 > Width) {
+            Width += 28;
         }
 
         return offset;
