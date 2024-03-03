@@ -1,7 +1,6 @@
 ﻿using Avalonia.NodeEditor.Core;
 using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
-using BfevLibrary.Core;
 using CafeEventEditor.Views.Nodes;
 
 namespace CafeEventEditor.ViewModels.Nodes;
@@ -31,10 +30,5 @@ public partial class EntryPointNode : ObservableNode, INodeTemplateProvider
         Height = view.Height;
 
         this.AddPin(Width / 2, Height - view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
-    }
-
-    public EntryPoint GetEntryPoint()
-    {
-        throw new NotImplementedException();
     }
 }
