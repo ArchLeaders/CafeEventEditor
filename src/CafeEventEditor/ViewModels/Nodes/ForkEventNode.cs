@@ -3,7 +3,7 @@ using Avalonia.NodeEditor.Core.Mvvm.Extensions;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
 using CafeEventEditor.Components;
-using CafeEventEditor.Core.Helpers;
+using CafeEventEditor.Core.Components;
 using CafeEventEditor.Core.Models;
 using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
@@ -48,11 +48,20 @@ public class ForkEventNode : ObservableNode, INodeTemplateProvider, IEventNode
         this.AddPin(Width / 2, Height- view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
     }
 
-    public Event AppendCafeEvent(EventHelper events, ActorHelper actors)
+    public Event BuildRecursive(FlowchartBuilderContext context)
     {
         ForkEvent forkEvent = new(Name ?? string.Empty);
+        context.ForkEvents.Push(forkEvent);
 
-        throw new NotImplementedException();
+        foreach (var branchNode in context.GetNodeChildren(this)) {
+            if (branchNode.BuildRecursive(context) is not Event branchEvent) {
+                continue;
+            }
+
+            forkEvent.ForkEventIndicies.Add(context.GetEventIndex(branchEvent, branchNode));
+        }
+
+        return forkEvent;
     }
 
     public IEnumerable<INode> AppendRecursive(IFlowchartDrawingNode drawing, INode node, Event cafeEvent)
