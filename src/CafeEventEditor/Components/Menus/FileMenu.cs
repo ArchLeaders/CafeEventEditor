@@ -1,4 +1,5 @@
-﻿using CafeEventEditor.Services.Attributes;
+﻿using CafeEventEditor.Core.Modals;
+using CafeEventEditor.Services.Attributes;
 using CafeEventEditor.ViewModels;
 using ConfigFactory.Avalonia.Helpers;
 using ConfigFactory.Core.Attributes;
@@ -15,6 +16,19 @@ public class FileMenu
             FlowchartViewModel flowchartEditor = new(file);
             DocumentManager.Shared.Documents.Add(flowchartEditor);
             DocumentManager.Shared.Current = flowchartEditor;
+        }
+    }
+
+    [Menu("Save", "File", "Ctrl + S", "fa-regular fa-floppy-disk")]
+    public static async Task Save()
+    {
+        if (DocumentManager.Shared.Current is FlowchartViewModel flowchartViewModel) {
+            AppStatus.Set($"Saving", "fa-solid fa-floppy-disk",
+                isWorkingStatus: true, logLevel: LogLevel.Info);
+
+            await flowchartViewModel.Save();
+            AppStatus.Set($"Saved Successfully", "fa-regular fa-circle-check",
+                isWorkingStatus: false, temporaryStatusTime: 1.5, LogLevel.Info);
         }
     }
 
