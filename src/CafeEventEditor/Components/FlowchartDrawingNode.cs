@@ -1,7 +1,7 @@
 ﻿using Avalonia.NodeEditor.Core;
 using Avalonia.NodeEditor.Mvvm;
 using BfevLibrary.Core;
-using CafeEventEditor.Core.Helpers;
+using CafeEventEditor.Core.Components;
 using CafeEventEditor.Core.Models;
 using CafeEventEditor.Extensions;
 using CafeEventEditor.ViewModels.Nodes;
@@ -40,26 +40,24 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
         GenerateDrawing();
     }
 
-    public Flowchart ToFlowchart()
+    public Flowchart BuildFlowchart()
     {
         ArgumentNullException.ThrowIfNull(Name);
         ArgumentNullException.ThrowIfNull(Nodes);
         ArgumentNullException.ThrowIfNull(Connectors);
 
-        EventHelper events = new();
-        ActorHelper actors = new();
         Flowchart flowchart = new(Name);
+        FlowchartBuilderContext context = new(flowchart, Connectors);
 
-        foreach (var node in Nodes) {
-            if (node is IEventNode eventNode) {
-                eventNode.AppendCafeEvent(events, actors);
-                continue;
-            }
-            
-            if (node is EntryPointNode entryPoint) {
-                ArgumentNullException.ThrowIfNull(entryPoint.Name);
-                flowchart.EntryPoints.Add(entryPoint.Name, entryPoint.GetEntryPoint());
-            }
+        foreach (var entryPointNode in Nodes.Select(x => (x as EntryPointNode)!).Where(x => x is not null)) {
+            ArgumentNullException.ThrowIfNull(entryPointNode.Name);
+
+            EntryPoint entryPoint = new() {
+                EventIndex = context.GetEventIndex(entryPointNode, skipPinCount: 0),
+                SubFlowEventIndices = []
+            };
+
+            flowchart.EntryPoints.Add(entryPointNode.Name, entryPoint);
         }
 
         return flowchart;
@@ -104,6 +102,8 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
             if (GetEvent(entryPoint.EventIndex) is Event cafeEvent) {
                 AppendEvent([entryPointNode.GetLastPin()], cafeEvent);
             }
+
+            EntryPointNodes.Add(entryPointNode);
         }
 
         Width = YOffset;
