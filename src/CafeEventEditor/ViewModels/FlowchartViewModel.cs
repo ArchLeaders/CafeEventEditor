@@ -89,5 +89,7 @@ public partial class FlowchartViewModel : Document
         value.ZoomOut();
         value.ZoomOut();
         value.ZoomOut();
+        value.ZoomOut();
+        value.ZoomOut();
     }
 }
