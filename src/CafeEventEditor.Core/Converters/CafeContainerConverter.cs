@@ -8,7 +8,7 @@ namespace CafeEventEditor.Core.Converters;
 
 public static class CafeContainerConverter
 {
-    private const string FLOAT_STRING_FORMAT = "0.00";
+    private const string FLOAT_STRING_FORMAT = "0.0############";
 
     public static Container ParseCafeContainer(this string yml)
     {
@@ -200,7 +200,7 @@ public static class CafeContainerConverter
             }
 
             if (item.Float is float f32) {
-                int bytesWritten = Encoding.UTF8.GetBytes(f32.ToString("0.0############"), f32RawValue);
+                int bytesWritten = Encoding.UTF8.GetBytes(f32.ToString(FLOAT_STRING_FORMAT), f32RawValue);
                 emitter.WriteScalar(f32RawValue[..bytesWritten]);
                 continue;
             }
@@ -208,7 +208,7 @@ public static class CafeContainerConverter
             if (item.FloatArray is float[] f32Array) {
                 emitter.BeginSequence(SequenceStyle.Flow);
                 foreach (var value in f32Array) {
-                    int bytesWritten = Encoding.UTF8.GetBytes(value.ToString("0.0############"), f32RawValue);
+                    int bytesWritten = Encoding.UTF8.GetBytes(value.ToString(FLOAT_STRING_FORMAT), f32RawValue);
                     emitter.WriteScalar(f32RawValue[..bytesWritten]);
                 }
 
