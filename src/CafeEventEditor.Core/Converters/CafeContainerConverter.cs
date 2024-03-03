@@ -8,6 +8,8 @@ namespace CafeEventEditor.Core.Converters;
 
 public static class CafeContainerConverter
 {
+    private const string FLOAT_STRING_FORMAT = "0.00";
+
     public static Container ParseCafeContainer(this string yml)
     {
         return FromYaml(yml);
@@ -15,11 +17,15 @@ public static class CafeContainerConverter
 
     public static Container FromYaml(string yml)
     {
-        byte[] buffer = ArrayPool<byte>.Shared.Rent(yml.Length);
-        Encoding.UTF8.GetBytes(yml, buffer);
+        if (string.IsNullOrEmpty(yml)) {
+            return [];
+        }
+
+        byte[] buffer = ArrayPool<byte>.Shared.Rent(yml.Length * 2);
+        int bytesWritten = Encoding.UTF8.GetBytes(yml, buffer);
 
         ReadOnlySequence<byte> sequence = new(buffer);
-        YamlParser parser = new(sequence.Slice(0, yml.Length));
+        YamlParser parser = new(sequence.Slice(0, bytesWritten));
         parser.SkipAfter(ParseEventType.DocumentStart);
 
         if (parser.CurrentEventType is not ParseEventType.MappingStart) {
@@ -49,7 +55,7 @@ public static class CafeContainerConverter
                     continue;
                 }
 
-                if (tag.Suffix.Equals("arg", StringComparison.InvariantCultureIgnoreCase)) {
+                if (tag.Suffix.Equals("a", StringComparison.InvariantCultureIgnoreCase) || tag.Suffix.Equals("arg", StringComparison.InvariantCultureIgnoreCase)) {
                     result[key] = new() {
                         Argument = parser.ReadScalarAsString()
                     };
@@ -113,7 +119,7 @@ public static class CafeContainerConverter
                     }
 
                     if (parser.TryReadScalarAsString(out str)) {
-                        if (tag.Suffix.Equals("w", StringComparison.InvariantCultureIgnoreCase)) {
+                        if (tag is not null && tag.Suffix.Equals("w", StringComparison.InvariantCultureIgnoreCase)) {
                             item.WStringArray = [.. item.WStringArray ?? [], str ?? string.Empty];
                         }
                         else {
@@ -156,9 +162,13 @@ public static class CafeContainerConverter
         Utf8YamlEmitter emitter = new(buffer);
         emitter.BeginMapping(MappingStyle.Block);
 
+        // Used for emitting formatted floats
+        byte[] f32RawBuffer = ArrayPool<byte>.Shared.Rent(12);
+        Span<byte> f32RawValue = f32RawBuffer.AsSpan()[..12];
+
         foreach (var (key, item) in container) {
             emitter.WriteString(key);
-            
+
             if (item.Int is int s32) {
                 emitter.WriteInt32(s32);
                 continue;
@@ -190,14 +200,16 @@ public static class CafeContainerConverter
             }
 
             if (item.Float is float f32) {
-                emitter.WriteFloat(f32);
+                int bytesWritten = Encoding.UTF8.GetBytes(f32.ToString("0.0############"), f32RawValue);
+                emitter.WriteScalar(f32RawValue[..bytesWritten]);
                 continue;
             }
 
             if (item.FloatArray is float[] f32Array) {
                 emitter.BeginSequence(SequenceStyle.Flow);
                 foreach (var value in f32Array) {
-                    emitter.WriteFloat(value);
+                    int bytesWritten = Encoding.UTF8.GetBytes(value.ToString("0.0############"), f32RawValue);
+                    emitter.WriteScalar(f32RawValue[..bytesWritten]);
                 }
 
                 emitter.EndSequence();
@@ -237,11 +249,13 @@ public static class CafeContainerConverter
             }
 
             if (item.Argument is string arg) {
+                emitter.Tag("!arg");
                 emitter.WriteString(arg);
                 continue;
             }
 
             if (item.ActorIdentifier is (string name, string subName)) {
+                emitter.Tag("!actor");
                 emitter.BeginSequence(SequenceStyle.Flow);
                 emitter.WriteString(name);
                 emitter.WriteString(subName);
