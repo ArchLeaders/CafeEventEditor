@@ -31,7 +31,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid Margin="15,0,0,0" RowDefinitions="*,*">
-            <!--<editor:Toolbox />-->
+            <editor:Toolbox Margin="0,0,0,15" />
 
             <ContentControl Grid.Row="1"
                             Content="{Binding Selected}"
