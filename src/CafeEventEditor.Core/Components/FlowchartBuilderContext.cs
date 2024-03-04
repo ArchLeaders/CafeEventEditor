@@ -21,7 +21,7 @@ public class FlowchartBuilderContext
         flowchart.Actors = Actors = new(flowchart);
         flowchart.Events = Events = new(flowchart);
 
-        foreach (var connector in connectors) {
+        foreach (IConnector connector in connectors) {
             if (connector.Start is null) {
                 continue;
             }

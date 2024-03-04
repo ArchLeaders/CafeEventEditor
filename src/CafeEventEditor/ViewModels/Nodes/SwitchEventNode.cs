@@ -97,11 +97,11 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
 
         if (Parent is IDrawingNode drawing && drawing.Connectors is not null) {
             IPin last = Pins[^1];
-            foreach (var connector in drawing.Connectors.Where(x => x.Start == last || x.End == last).ToArray()) {
+            foreach (IConnector? connector in drawing.Connectors.Where(x => x.Start == last || x.End == last).ToArray()) {
                 drawing.Connectors.Remove(connector);
             }
         }
-        
+
         Pins.RemoveAt(Pins.Count - 1);
 
         double resizedWidth = Pins.Count * 28;
@@ -173,7 +173,7 @@ public partial class SwitchEventNode : ObservableNode, INodeTemplateProvider, IE
         double initialYOffset = drawing.YOffset;
 
         List<INode> cases = [];
-        foreach (var (caseIndex, caseEvent) in switchEvent.SwitchCases.Select(x => (x.Value, Event: drawing.GetEvent(x.EventIndex)!)).Where(x => x.Event is not null)) {
+        foreach ((int caseIndex, Event caseEvent) in switchEvent.SwitchCases.Select(x => (x.Value, Event: drawing.GetEvent(x.EventIndex)!)).Where(x => x.Event is not null)) {
             switchEventNode.AddCase(caseIndex);
 
             drawing.YOffset = initialYOffset;

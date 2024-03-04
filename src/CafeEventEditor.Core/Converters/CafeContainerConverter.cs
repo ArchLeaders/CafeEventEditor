@@ -166,7 +166,7 @@ public static class CafeContainerConverter
         byte[] f32RawBuffer = ArrayPool<byte>.Shared.Rent(12);
         Span<byte> f32RawValue = f32RawBuffer.AsSpan()[..12];
 
-        foreach (var (key, item) in container) {
+        foreach ((string key, ContainerItem item) in container) {
             emitter.WriteString(key);
 
             if (item.Int is int s32) {
@@ -176,7 +176,7 @@ public static class CafeContainerConverter
 
             if (item.IntArray is int[] s32Array) {
                 emitter.BeginSequence(SequenceStyle.Flow);
-                foreach (var value in s32Array) {
+                foreach (int value in s32Array) {
                     emitter.WriteInt32(value);
                 }
 
@@ -191,7 +191,7 @@ public static class CafeContainerConverter
 
             if (item.BoolArray is bool[] booleanArray) {
                 emitter.BeginSequence(SequenceStyle.Flow);
-                foreach (var value in booleanArray) {
+                foreach (bool value in booleanArray) {
                     emitter.WriteBool(value);
                 }
 
@@ -207,7 +207,7 @@ public static class CafeContainerConverter
 
             if (item.FloatArray is float[] f32Array) {
                 emitter.BeginSequence(SequenceStyle.Flow);
-                foreach (var value in f32Array) {
+                foreach (float value in f32Array) {
                     int bytesWritten = Encoding.UTF8.GetBytes(value.ToString(FLOAT_STRING_FORMAT), f32RawValue);
                     emitter.WriteScalar(f32RawValue[..bytesWritten]);
                 }
@@ -223,7 +223,7 @@ public static class CafeContainerConverter
 
             if (item.StringArray is string[] strArray) {
                 emitter.BeginSequence(SequenceStyle.Flow);
-                foreach (var value in strArray) {
+                foreach (string value in strArray) {
                     emitter.WriteString(value);
                 }
 
@@ -239,7 +239,7 @@ public static class CafeContainerConverter
 
             if (item.WStringArray is string[] wstrArray) {
                 emitter.BeginSequence(SequenceStyle.Flow);
-                foreach (var value in wstrArray) {
+                foreach (string value in wstrArray) {
                     emitter.Tag("!w");
                     emitter.WriteString(value);
                 }

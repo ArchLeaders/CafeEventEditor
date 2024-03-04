@@ -32,7 +32,7 @@ public class MenuFactory(TopLevel? topLevel) : IMenuFactory
     public IMenuFactory Prepend(Type type)
     {
         if (_groups.TryGetValue(type, out List<Control>? group)) {
-            foreach (var item in group) {
+            foreach (Control item in group) {
                 if (item.Parent is ItemsControl itemsControl) {
                     try {
                         itemsControl.Items.Remove(item);
@@ -64,7 +64,7 @@ public class MenuFactory(TopLevel? topLevel) : IMenuFactory
     {
         Type type = source.GetType();
         List<Control> group = _groups[type] = [];
-        foreach ((var info, var attribute) in Collect(type)) {
+        foreach ((MethodInfo? info, MenuAttribute? attribute) in Collect(type)) {
             AppendItem(type, source, info, attribute, group);
             _parent = null;
         }
@@ -142,7 +142,7 @@ public class MenuFactory(TopLevel? topLevel) : IMenuFactory
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void ProcessNewItems(object source, IList items, MethodInfo info)
     {
-        foreach (var item in items) {
+        foreach (object? item in items) {
             if (item is MenuItem menuItem) {
                 menuItem.Command = new AsyncRelayCommand(async () => {
                     if (info.Invoke(source, [menuItem]) is Task task) {
@@ -155,7 +155,7 @@ public class MenuFactory(TopLevel? topLevel) : IMenuFactory
 
     private void SetParentFromPath(string path, List<Control> group)
     {
-        foreach (var part in path.Replace('\\', '/').Split('/')) {
+        foreach (string part in path.Replace('\\', '/').Split('/')) {
             MenuItem item = new() {
                 Header = part,
                 Classes = {

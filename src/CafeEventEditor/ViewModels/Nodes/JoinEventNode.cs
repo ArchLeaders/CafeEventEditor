@@ -28,7 +28,7 @@ public class JoinEventNode : ObservableNode, INodeTemplateProvider, IJoinEventNo
 
     public JoinEventNode(JoinEvent joinEvent) : this(joinEvent.Name)
     {
-        
+
     }
 
     public JoinEventNode(string name)
@@ -43,7 +43,7 @@ public class JoinEventNode : ObservableNode, INodeTemplateProvider, IJoinEventNo
         Height = view.Height;
 
         this.AddPin(Width / 2, view.Padding.Top, 20, 20, PinAlignment.Top, "Input");
-        this.AddPin(Width / 2, Height- view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
+        this.AddPin(Width / 2, Height - view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
     }
 
     public Event BuildRecursive(FlowchartBuilderContext context)

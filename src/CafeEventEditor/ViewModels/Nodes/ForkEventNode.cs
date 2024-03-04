@@ -7,7 +7,6 @@ using CafeEventEditor.Core.Components;
 using CafeEventEditor.Core.Models;
 using CafeEventEditor.Extensions;
 using CafeEventEditor.Views.Nodes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CafeEventEditor.ViewModels.Nodes;
 
@@ -30,7 +29,7 @@ public class ForkEventNode : ObservableNode, INodeTemplateProvider, IEventNode
 
     public ForkEventNode(ForkEvent forkEvent) : this(forkEvent.Name)
     {
-        
+
     }
 
     public ForkEventNode(string name)
@@ -45,7 +44,7 @@ public class ForkEventNode : ObservableNode, INodeTemplateProvider, IEventNode
         Height = view.Height;
 
         this.AddPin(Width / 2, view.Padding.Top, 20, 20, PinAlignment.Top, "Input");
-        this.AddPin(Width / 2, Height- view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
+        this.AddPin(Width / 2, Height - view.Padding.Bottom, 20, 20, PinAlignment.Bottom, "Output");
     }
 
     public Event BuildRecursive(FlowchartBuilderContext context)
@@ -53,7 +52,7 @@ public class ForkEventNode : ObservableNode, INodeTemplateProvider, IEventNode
         ForkEvent forkEvent = new(Name ?? string.Empty);
         context.ForkEvents.Push(forkEvent);
 
-        foreach (var branchNode in context.GetNodeChildren(this)) {
+        foreach (IEventNode branchNode in context.GetNodeChildren(this)) {
             if (branchNode.BuildRecursive(context) is not Event branchEvent) {
                 continue;
             }

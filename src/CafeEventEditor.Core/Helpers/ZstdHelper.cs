@@ -36,7 +36,7 @@ public static class ZstdHelper
             RevrsReader reader = new(data);
             ImmutableSarc sarc = new(ref reader);
 
-            foreach ((var _, var dictData) in sarc) {
+            foreach ((string _, Span<byte> dictData) in sarc) {
                 TryLoadDict(dictData);
             }
         }

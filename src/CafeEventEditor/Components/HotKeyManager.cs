@@ -30,19 +30,19 @@ public static class HotKeyManager
 
     public static void DisableHotKey(params KeyGesture[] keys)
     {
-        foreach (var key in keys) {
+        foreach (KeyGesture key in keys) {
             HotKeys[key] = false;
         }
     }
 
     public static void DisableHotKeyGroup(params string[] groups)
     {
-        foreach (var group in groups) {
+        foreach (string group in groups) {
             if (!HotKeyGroups.TryGetValue(group, out List<KeyGesture>? keys)) {
                 continue;
             }
 
-            foreach (var key in keys) {
+            foreach (KeyGesture key in keys) {
                 HotKeys[key] = false;
             }
         }

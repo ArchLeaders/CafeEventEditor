@@ -35,7 +35,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
         Width = 5000;
         EnableSnap = true;
         SnapX = 10;
-        SnapY = 10; 
+        SnapY = 10;
 
         GenerateDrawing();
     }
@@ -49,7 +49,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
         Flowchart flowchart = new(Name);
         FlowchartBuilderContext context = new(flowchart, Connectors);
 
-        foreach (var entryPointNode in Nodes.Select(x => (x as EntryPointNode)!).Where(x => x is not null)) {
+        foreach (EntryPointNode? entryPointNode in Nodes.Select(x => (x as EntryPointNode)!).Where(x => x is not null)) {
             ArgumentNullException.ThrowIfNull(entryPointNode.Name);
 
             EntryPoint entryPoint = new() {
@@ -80,7 +80,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
     {
         ArgumentNullException.ThrowIfNull(Nodes, nameof(Nodes));
 
-        foreach (var (name, entryPoint) in _flowchart.EntryPoints) {
+        foreach ((string name, EntryPoint entryPoint) in _flowchart.EntryPoints) {
             UseAbsoluteXOffset();
 
             EntryPointNode entryPointNode = new(name) {
@@ -116,7 +116,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
         ArgumentNullException.ThrowIfNull(Connectors, nameof(Connectors));
 
         if (_drawnEvents.TryGetValue(cafeEvent, out IEventNode? drawn)) {
-            foreach (var parent in parents) {
+            foreach (IPin parent in parents) {
                 Connectors.Add(new ObservableConnector() {
                     Parent = this,
                     Start = parent,
@@ -150,7 +150,7 @@ public partial class FlowchartDrawingNode : ObservableDrawingNode, IFlowchartDra
         result.Y = YOffset;
 
         Nodes.Add(result);
-        foreach (var parent in parents) {
+        foreach (IPin parent in parents) {
             Connectors.Add(new ObservableConnector() {
                 Parent = this,
                 Start = parent,
