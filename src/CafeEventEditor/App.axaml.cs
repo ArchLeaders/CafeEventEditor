@@ -54,9 +54,12 @@ public partial class App : Application
             });
 
 #if DEBUG
-            FlowchartViewModel flowchartEditor = new(@"D:\bin\Bfev\AnotherAnimals.bfevfl");
-            DocumentManager.Shared.Documents.Add(flowchartEditor);
-            DocumentManager.Shared.Current = flowchartEditor;
+            const string debugPath = @"D:\bin\Bfev\AnotherAnimals.bfevfl";
+            if (File.Exists(debugPath)) {
+                FlowchartViewModel flowchartEditor = new(debugPath);
+                DocumentManager.Shared.Documents.Add(flowchartEditor);
+                DocumentManager.Shared.Current = flowchartEditor;
+            }
 #endif
         }
 
