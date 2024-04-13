@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Avalonia.NodeEditor\src\Avalonia.NodeEditor.Core.Mvvm\Avalonia.NodeEditor.Core.Mvvm.csproj" />
-    <ProjectReference Include="..\..\lib\VYaml\VYaml\VYaml.csproj" />
   </ItemGroup>
 
 </Project>

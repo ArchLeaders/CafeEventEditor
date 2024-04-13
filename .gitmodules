@@ -1,6 +1,3 @@
 [submodule "lib/Avalonia.NodeEditor"]
 	path = lib/Avalonia.NodeEditor
 	url = https://github.com/ArchLeaders/Avalonia.NodeEditor
-[submodule "lib/VYaml"]
-	path = lib/VYaml
-	url = https://github.com/ArchLeaders/VYaml
